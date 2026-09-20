@@ -19,7 +19,9 @@ prices, URLs, features or contact details — if a value is `❓` in data.md, th
 - Auth for `/admin` only: single admin, credentials from `.env`, `iron-session` cookie.
 - Logos are SVG — inline them or use `<Image>`; never rasterise. Recolour via CSS only where a mark is single-colour.
 - Fonts: Vazirmatn variable woff2 self-hosted from `public/fonts/` (`@font-face` in globals.css), no Google Fonts (blocked for Iranian users).
-- Deploy: Docker (multi-stage, standalone output) + Caddy on Ubuntu VPS. `docker compose up -d`.
+- Deploy: Docker (multi-stage, standalone output) on the holding's Ubuntu VPS. That VPS already runs nginx
+  on 80/443, so production uses `docker compose -f docker-compose.external-proxy.yml up -d --build`
+  (app on 127.0.0.1:3100, nginx vhost from `deploy/`, certbot). The bundled Caddy compose is for a clean host.
 - Zero external SaaS at runtime (no Vercel, no analytics, no CDN) — users are in Iran.
 
 ## Architecture
