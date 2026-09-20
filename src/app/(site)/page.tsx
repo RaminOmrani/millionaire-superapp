@@ -2,10 +2,14 @@ import Link from "next/link";
 import { ArrowDown, MessageSquareText } from "lucide-react";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { holding } from "@/content/holding";
-import { products } from "@/content/products";
+import { getResolvedProducts } from "@/content/resolve";
 import { toPersianDigits } from "@/lib/persian-digits";
 
+// Content can be edited from /admin, so render per request (SQLite read is sub-millisecond).
+export const dynamic = "force-dynamic";
+
 export default function LandingPage() {
+  const products = getResolvedProducts();
   const activeCount = products.filter((p) => p.status === "active").length;
 
   return (
@@ -96,7 +100,7 @@ export default function LandingPage() {
               هر محصول، یک برند مستقل زیر یک سقف. برای ورود، روی کارت بزنید.
             </p>
           </div>
-          <ProductGrid />
+          <ProductGrid products={products} />
         </div>
       </section>
     </>

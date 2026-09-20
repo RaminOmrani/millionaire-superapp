@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Clock, LifeBuoy, Mail, MapPin, Phone } from "lucide-react";
 import { holding } from "@/content/holding";
 import { toPersianDigits } from "@/lib/persian-digits";
@@ -19,6 +20,11 @@ export function SiteFooter() {
           />
           <p className="display mt-6 max-w-sm text-2xl text-balance">{holding.slogan}</p>
           <p className="mt-3 text-sm text-fg-muted">{holding.subtitle}</p>
+          <nav className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm" aria-label="پیوندها">
+            <Link href="/#products" className="text-fg-muted hover:text-fg">محصولات</Link>
+            <Link href="/about" className="text-fg-muted hover:text-fg">درباره‌ی ما</Link>
+            <Link href="/consult" className="text-fg-muted hover:text-fg">درخواست مشاوره</Link>
+          </nav>
         </div>
 
         <dl className="grid gap-5 text-sm lg:col-span-7 lg:grid-cols-2">

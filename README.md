@@ -31,8 +31,13 @@ Migrations are applied automatically when the app opens `DATABASE_PATH` (default
 | `/` | Landing — product tiles |
 | `/[product]` | Product hub — 5 action cards (locked ones stay visible) |
 | `/consult` | Consultation form (Server Action → zod → SQLite) |
-| `/admin` | Admin: list/filter requests, change status, notes, CSV export (`/api/admin/export`) |
-| `/admin/login` | Single admin, credentials from `.env`, iron-session cookie |
+| `/about` | Holding info (locked fields shown as «به‌زودی») |
+| `/admin` | Requests: search, filters, pagination, bulk status, CSV export (`/api/admin/export`) |
+| `/admin/products` | Content management: status, description, features, per-action links, pricing plans |
+| `/admin/stats` | Counts, 30-day chart, per-product breakdown, login log |
+| `/admin/settings` | Change admin password, notification e-mail (needs `SMTP_*`) |
+| `/admin/login` | Single admin, iron-session cookie, throttled after 5 failures |
+| `/sitemap.xml`, `/robots.txt`, `/manifest.webmanifest` | SEO + installable PWA |
 
 ## Deploy (Ubuntu VPS)
 

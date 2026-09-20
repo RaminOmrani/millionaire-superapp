@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Clock, Mail, Phone } from "lucide-react";
 import { ConsultForm } from "@/components/product/ConsultForm";
 import { holding } from "@/content/holding";
+import { CONSULT_PRODUCTS } from "@/db/schema";
 import { toPersianDigits } from "@/lib/persian-digits";
 
 export const metadata: Metadata = {
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
   description: `تماس با ${holding.nameFa}`,
 };
 
-export default function ConsultPage() {
+export default async function ConsultPage({ searchParams }: { searchParams: Promise<{ product?: string }> }) {
+  const { product } = await searchParams;
+  const defaultProduct = product && (CONSULT_PRODUCTS as readonly string[]).includes(product) ? product : "";
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
       <div className="grid gap-12 lg:grid-cols-12">
@@ -53,7 +57,7 @@ export default function ConsultPage() {
         </div>
 
         <div className="relative lg:col-span-7">
-          <ConsultForm />
+          <ConsultForm defaultProduct={defaultProduct} />
         </div>
       </div>
     </section>

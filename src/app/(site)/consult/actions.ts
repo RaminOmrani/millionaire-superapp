@@ -1,7 +1,11 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
-import { consultSchema } from "@/lib/validation";
+import { PRODUCT_LABELS, TIME_LABELS } from "@/content/labels";
+import { mailConfigured, sendMail } from "@/lib/mail";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { consultSchema, type ConsultValues } from "@/lib/validation";
 
 export type ConsultState =
   | { status: "idle" }
@@ -34,6 +38,12 @@ export async function submitConsult(_prev: ConsultState, formData: FormData): Pr
   // Honeypot filled → pretend success without storing.
   if (v.website) return { status: "success", id: 0 };
 
+  const ip = await clientIp();
+  const limited = rateLimit(`consult:${ip}`, 5, 10 * 60 * 1000);
+  if (!limited.ok) {
+    return { status: "error", message: "تعداد درخواست‌ها زیاد است. چند دقیقه‌ی دیگر دوباره تلاش کنید.", values };
+  }
+
   try {
     const row = getDb()
       .insert(schema.consultRequests)
@@ -47,9 +57,34 @@ export async function submitConsult(_prev: ConsultState, formData: FormData): Pr
       })
       .returning({ id: schema.consultRequests.id })
       .get();
+    void notifyAdmin(row?.id ?? 0, v);
     return { status: "success", id: row?.id ?? 0 };
   } catch (err) {
     console.error("consult insert failed", err);
     return { status: "error", message: "ثبت درخواست ممکن نشد. لطفاً دوباره تلاش کنید یا تماس بگیرید.", values };
+  }
+}
+
+/** Fire-and-forget e-mail to the address saved in admin settings (needs SMTP_* env). */
+async function notifyAdmin(id: number, v: ConsultValues) {
+  try {
+    if (!mailConfigured()) return;
+    const to = getDb().select().from(schema.settings).where(eq(schema.settings.key, "notify_email")).get()?.value;
+    if (!to) return;
+    const lines = [
+      `درخواست مشاوره #${id}`,
+      `نام: ${v.fullName}`,
+      `موبایل: ${v.phone}`,
+      `کسب‌وکار: ${v.businessName ?? "-"}`,
+      `محصول: ${PRODUCT_LABELS[v.product]}`,
+      `زمان تماس: ${v.bestTime ? TIME_LABELS[v.bestTime] : "-"}`,
+      "",
+      v.message ?? "",
+      "",
+      `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/admin/requests/${id}`,
+    ];
+    await sendMail(to, `درخواست مشاوره جدید — ${v.fullName}`, lines.join("\n"));
+  } catch (err) {
+    console.error("notify mail failed", err);
   }
 }

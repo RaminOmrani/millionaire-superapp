@@ -6,10 +6,13 @@ import { ArrowUpLeft, Lock } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import type { CSSProperties } from "react";
 import type { Product } from "@/content/products";
+
+/** Only the fields the tile renders — works for base and resolved products. */
+export type TileProduct = Pick<Product, "slug" | "nameFa" | "tagline" | "status" | "accent" | "logo">;
 import { cn } from "@/lib/utils";
 
 interface Props {
-  product: Product;
+  product: TileProduct;
   index: number;
   /** Tailwind grid placement classes for the asymmetric layout */
   className?: string;

@@ -27,6 +27,12 @@ export function SiteHeader() {
             محصولات
           </Link>
           <Link
+            href="/about"
+            className="hidden rounded-full px-4 py-2 text-sm font-medium text-fg-muted transition hover:text-fg sm:inline-flex"
+          >
+            درباره‌ی ما
+          </Link>
+          <Link
             href="/consult"
             className="inline-flex items-center gap-2 rounded-full bg-brand-red px-4 py-2 text-sm font-bold text-white shadow-[0_8px_30px_-10px_var(--color-brand-red)] transition hover:bg-brand-red-light active:scale-[0.98]"
           >

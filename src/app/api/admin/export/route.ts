@@ -1,7 +1,8 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, gte, like, lte, or, type SQL } from "drizzle-orm";
 import { PRODUCT_LABELS, STATUS_LABELS, TIME_LABELS } from "@/content/labels";
 import { getDb, schema } from "@/db/client";
-import { CONSULT_STATUSES } from "@/db/schema";
+import { CONSULT_PRODUCTS, CONSULT_STATUSES } from "@/db/schema";
+import { toLatinDigits } from "@/lib/persian-digits";
 import { getSession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
@@ -18,14 +19,24 @@ export async function GET(request: Request) {
   const session = await getSession();
   if (!session.admin) return new Response("Unauthorized", { status: 401 });
 
-  const status = new URL(request.url).searchParams.get("status");
-  const filter = status && (CONSULT_STATUSES as readonly string[]).includes(status) ? (status as (typeof CONSULT_STATUSES)[number]) : undefined;
-
+  const sp = new URL(request.url).searchParams;
   const t = schema.consultRequests;
+  const where: SQL[] = [];
+  const status = sp.get("status");
+  if (status && (CONSULT_STATUSES as readonly string[]).includes(status)) where.push(eq(t.status, status as (typeof CONSULT_STATUSES)[number]));
+  const product = sp.get("product");
+  if (product && (CONSULT_PRODUCTS as readonly string[]).includes(product)) where.push(eq(t.product, product as (typeof CONSULT_PRODUCTS)[number]));
+  const q = (sp.get("q") ?? "").trim();
+  if (q) where.push(or(like(t.fullName, `%${q}%`), like(t.businessName, `%${q}%`), like(t.phone, `%${toLatinDigits(q)}%`))!);
+  const from = sp.get("from");
+  if (from && !Number.isNaN(new Date(from).getTime())) where.push(gte(t.createdAt, new Date(from)));
+  const to = sp.get("to");
+  if (to && !Number.isNaN(new Date(to).getTime())) where.push(lte(t.createdAt, new Date(new Date(to).getTime() + 86_400_000)));
+
   const rows = getDb()
     .select()
     .from(t)
-    .where(filter ? eq(t.status, filter) : undefined)
+    .where(where.length ? and(...where) : undefined)
     .orderBy(desc(t.createdAt))
     .all();
 

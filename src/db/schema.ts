@@ -35,3 +35,61 @@ export const consultRequests = sqliteTable("consult_requests", {
 
 export type ConsultRequest = typeof consultRequests.$inferSelect;
 export type NewConsultRequest = typeof consultRequests.$inferInsert;
+
+/* ------------------------------------------------------------------ */
+/* Content overrides — edited from /admin, layered over products.ts    */
+/* ------------------------------------------------------------------ */
+
+export const PRODUCT_STATUSES = ["active", "coming_soon"] as const;
+
+export interface ActionOverride {
+  enabled?: boolean;
+  href?: string | null;
+  note?: string | null;
+  content?: string[];
+}
+
+export interface PricingPlan {
+  name: string;
+  price: string;
+  period?: string;
+  features: string[];
+  href?: string;
+  highlight?: boolean;
+}
+
+export const productContent = sqliteTable("product_content", {
+  slug: text("slug").primaryKey(),
+  status: text("status", { enum: PRODUCT_STATUSES }),
+  description: text("description"),
+  website: text("website"),
+  version: text("version"),
+  features: text("features", { mode: "json" }).$type<string[]>(),
+  actions: text("actions", { mode: "json" }).$type<Record<string, ActionOverride>>(),
+  plans: text("plans", { mode: "json" }).$type<PricingPlan[]>(),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type ProductContentRow = typeof productContent.$inferSelect;
+
+/** Key/value settings (admin password hash, notification e-mail, …). */
+export const settings = sqliteTable("settings", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+/** Login audit + brute-force throttling. */
+export const loginAttempts = sqliteTable("login_attempts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  ip: text("ip").notNull(),
+  username: text("username").notNull(),
+  success: integer("success", { mode: "boolean" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});

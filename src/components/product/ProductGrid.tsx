@@ -1,5 +1,5 @@
-import { products, type ProductSlug } from "@/content/products";
-import { ProductTile } from "./ProductTile";
+import type { ProductSlug } from "@/content/products";
+import { ProductTile, type TileProduct } from "./ProductTile";
 
 /** Asymmetric editorial layout on desktop; single column on mobile. */
 const LAYOUT: Record<ProductSlug, { className: string; emphasis?: boolean }> = {
@@ -10,7 +10,7 @@ const LAYOUT: Record<ProductSlug, { className: string; emphasis?: boolean }> = {
   garson: { className: "lg:col-span-5" },
 };
 
-export function ProductGrid() {
+export function ProductGrid({ products }: { products: TileProduct[] }) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-12 lg:auto-rows-[minmax(300px,auto)]">
       {products.map((product, i) => (

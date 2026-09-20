@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
-import { ArrowRight, Save } from "lucide-react";
-import { updateNotes, updateStatus } from "@/app/admin/actions";
+import { ArrowRight, Save, Trash2 } from "lucide-react";
+import { deleteRequest, updateNotes, updateStatus } from "@/app/admin/actions";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { ConfirmSubmit } from "@/components/admin/ConfirmSubmit";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { inputClass } from "@/components/ui/Field";
 import { PRODUCT_LABELS, STATUS_LABELS, TIME_LABELS } from "@/content/labels";
@@ -26,9 +27,24 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
 
   const setStatus = updateStatus.bind(null, id);
   const setNotes = updateNotes.bind(null, id);
+  const remove = deleteRequest.bind(null, id);
 
   return (
-    <AdminShell title={`درخواست ${toPersianDigits(id)}`}>
+    <AdminShell
+      title={`درخواست ${toPersianDigits(id)}`}
+      current="/admin"
+      actions={
+        <form action={remove}>
+          <ConfirmSubmit
+            message="این درخواست برای همیشه حذف شود؟"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line px-4 py-2 text-sm font-medium text-brand-red hover:bg-brand-red/5"
+          >
+            <Trash2 className="size-4" aria-hidden />
+            حذف درخواست
+          </ConfirmSubmit>
+        </form>
+      }
+    >
       <Link href="/admin" className="mb-6 inline-flex items-center gap-2 text-sm text-fg-muted hover:text-fg">
         <ArrowRight className="size-4" aria-hidden />
         بازگشت به لیست

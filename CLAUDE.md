@@ -16,8 +16,11 @@ prices, URLs, features or contact details — if a value is `❓` in data.md, th
 - Tailwind CSS v4 + CSS variables for brand tokens (see data.md §2). No component library.
 - `motion` v13 (`motion/react`) for animation. `lucide-react` for icons.
 - SQLite via `better-sqlite3` + Drizzle ORM. DB file at `./data/app.db` (Docker volume).
-- Auth for `/admin` only: single admin, credentials from `.env`, `iron-session` cookie.
-- Logos are SVG — inline them or use `<Image>`; never rasterise. Recolour via CSS only where a mark is single-colour.
+- Auth for `/admin` only: single admin, username from `.env`; password from `.env` unless a scrypt hash was saved
+  from /admin/settings (table `settings`, key `password_hash`). `iron-session` cookie, `proxy.ts` guard, login throttling.
+- Logos are SVG — inline them or use `<Image>`; never rasterise in the UI. Recolour via CSS only where a mark is single-colour.
+  Exception: `public/icons/*.png` (PWA/apple icons) and `public/og/*.png` (Open Graph) are rendered from the SVGs
+  with Playwright (scratch script, not in repo) because those consumers need PNG.
 - Fonts: Vazirmatn variable woff2 self-hosted from `public/fonts/` (`@font-face` in globals.css), no Google Fonts (blocked for Iranian users).
 - Deploy: Docker (multi-stage, standalone output) on the holding's Ubuntu VPS. That VPS already runs nginx
   on 80/443, so production uses `docker compose -f docker-compose.external-proxy.yml up -d --build`
@@ -43,6 +46,9 @@ docs/reference/                site screenshots (design inspiration only)
 ```
 - Product content lives in `src/content/products.ts` as a typed array. Each product has
   `status: 'active' | 'coming_soon'` and each action has `enabled: boolean` + `href` or `content`.
+- Admin overrides (table `product_content`) are layered on top by `src/content/resolve.ts`
+  (`getResolvedProducts()`); public pages read the resolved data and are `force-dynamic`.
+  products.ts stays the data.md baseline — never edit it to reflect panel changes.
 - A locked action renders visibly (dimmed, lock glyph, tooltip «به‌زودی») — never hidden.
 - Support action for every product is a plain link to `https://support.softmiliac.com` (no query param —
   the user picks the company and section on the support site itself; decided by Ramin).
@@ -69,5 +75,6 @@ docs/reference/                site screenshots (design inspiration only)
 - Commit after each coherent step with conventional commits (`feat:`, `fix:`, `chore:`).
 - When you need a missing value, ask Ramin in Persian in one short list — do not stall on it,
   keep the item locked and continue.
-- Every reply to Ramin ends with a 3-line progress overview: done / remaining / next.
+- Every reply to Ramin ends with a 3-line progress overview: done / remaining / next, and reminds him of the
+  open items in `docs/ROADMAP.md` §1 (locked data) and §4 (infrastructure) when relevant.
 - Never commit `.env`, `data/*.db`, or `node_modules`.

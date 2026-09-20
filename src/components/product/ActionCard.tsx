@@ -2,7 +2,8 @@
 
 import { ArrowUpLeft, Bot, CircleHelp, ExternalLink, Info, LifeBuoy, Lock, LogIn, Tag } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import type { ActionKey, ProductAction } from "@/content/products";
+import type { ActionKey } from "@/content/products";
+import type { ResolvedAction } from "@/content/resolve";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<ActionKey, typeof LogIn> = {
@@ -16,7 +17,7 @@ const ICONS: Record<ActionKey, typeof LogIn> = {
 const COMING_SOON = "به‌زودی";
 
 interface Props {
-  action: ProductAction;
+  action: ResolvedAction;
   index: number;
   className?: string;
   /** Rendered inside the card body (details / pricing content) */
@@ -27,7 +28,7 @@ export function ActionCard({ action, index, className, children }: Props) {
   const reduce = useReducedMotion();
   const Icon = ICONS[action.key] ?? CircleHelp;
   const locked = !action.enabled;
-  const external = action.enabled && !!action.href;
+  const external = action.enabled && !!action.href && !action.plans?.length;
 
   const entrance = reduce
     ? {}
@@ -79,7 +80,7 @@ export function ActionCard({ action, index, className, children }: Props) {
         {external && (
           <p className="ltr-nums mt-1 inline-flex items-center gap-1 text-xs text-fg-faint">
             <ExternalLink className="size-3" aria-hidden />
-            {action.href!.replace(/^https?:\/\//, "")}
+            {action.href?.replace(/^https?:\/\//, "")}
           </p>
         )}
         {children}

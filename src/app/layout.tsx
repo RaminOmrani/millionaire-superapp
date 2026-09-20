@@ -10,7 +10,17 @@ export const metadata: Metadata = {
   },
   description: `${holding.subtitle} — پورتال یکپارچه‌ی محصولات ${holding.nameFa}`,
   applicationName: holding.nameFa,
-  icons: { icon: holding.logo.mark },
+  icons: {
+    icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }, { url: holding.logo.mark, type: "image/svg+xml" }],
+    apple: "/icons/apple-touch-icon.png",
+  },
+  openGraph: {
+    type: "website",
+    locale: "fa_IR",
+    siteName: holding.nameFa,
+    images: [{ url: "/og/default.png", width: 1200, height: 630 }],
+  },
+  appleWebApp: { capable: true, title: holding.nameFa, statusBarStyle: "black-translucent" },
 };
 
 export const viewport: Viewport = {

@@ -9,7 +9,7 @@ import { toPersianDigits } from "@/lib/persian-digits";
 
 const initial: ConsultState = { status: "idle" };
 
-export function ConsultForm() {
+export function ConsultForm({ defaultProduct = "" }: { defaultProduct?: string }) {
   const [state, action, pending] = useActionState(submitConsult, initial);
   const errors = state.status === "error" ? (state.fieldErrors ?? {}) : {};
   const values = state.status === "error" ? state.values : {};
@@ -85,7 +85,7 @@ export function ConsultForm() {
             id="product"
             name="product"
             required
-            defaultValue={values.product ?? ""}
+            defaultValue={values.product ?? defaultProduct}
             aria-invalid={!!errors.product}
             className={inputClass}
           >
