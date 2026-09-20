@@ -58,4 +58,6 @@ docker compose -f docker-compose.external-proxy.yml up -d --build   # app on 127
 ```
 
 Then add the site to the existing proxy — `deploy/nginx-app.softmiliac.com.conf` (nginx) or
-`deploy/caddy-site-block.txt` (Caddy). Change the port with `APP_PORT=3100` in `.env` if 3000 is busy.
+`deploy/caddy-site-block.txt` (Caddy). Both snippets use port 3100; set `APP_PORT=3100` in `.env`
+(3000 is already taken on the holding's VPS). The admin cookie is `Secure`, so `/admin` login only
+works over HTTPS — issue the certificate (e.g. `certbot --nginx -d app.softmiliac.com`) once DNS points here.
