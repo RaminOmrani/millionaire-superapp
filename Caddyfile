@@ -1,0 +1,16 @@
+# data.md §6 — app.softmiliac.com → this VPS. Caddy issues/renews TLS automatically
+# once the DNS A record exists (still ❓ in data.md).
+app.softmiliac.com {
+	encode zstd gzip
+	reverse_proxy app:3000
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	@static path /fonts/* /brand/* /_next/static/*
+	header @static Cache-Control "public, max-age=31536000, immutable"
+}

@@ -10,13 +10,15 @@ prices, URLs, features or contact details — if a value is `❓` in data.md, th
 - Talk to the user (Ramin) in Persian. Code, comments, commit messages in English.
 
 ## Stack (decided — do not re-ask)
-- Next.js 15 (App Router, React 19, Server Actions), TypeScript strict.
+- Always the **latest stable** of every package (Ramin's rule); bump freely and update this file.
+  Current: Next.js 16 (App Router, Turbopack, React 19, Server Actions), TypeScript 6 strict
+  (TS 7 is blocked by typescript-eslint; ESLint 9 is the newest `eslint-config-next` supports).
 - Tailwind CSS v4 + CSS variables for brand tokens (see data.md §2). No component library.
-- `motion` (framer-motion successor) for animation. `lucide-react` for icons.
+- `motion` v13 (`motion/react`) for animation. `lucide-react` for icons.
 - SQLite via `better-sqlite3` + Drizzle ORM. DB file at `./data/app.db` (Docker volume).
 - Auth for `/admin` only: single admin, credentials from `.env`, `iron-session` cookie.
 - Logos are SVG — inline them or use `<Image>`; never rasterise. Recolour via CSS only where a mark is single-colour.
-- Fonts: Vazirmatn self-hosted from `public/fonts/` (woff2), no Google Fonts (blocked for Iranian users).
+- Fonts: Vazirmatn variable woff2 self-hosted from `public/fonts/` (`@font-face` in globals.css), no Google Fonts (blocked for Iranian users).
 - Deploy: Docker (multi-stage, standalone output) + Caddy on Ubuntu VPS. `docker compose up -d`.
 - Zero external SaaS at runtime (no Vercel, no analytics, no CDN) — users are in Iran.
 
@@ -60,6 +62,8 @@ docs/reference/                site screenshots (design inspiration only)
 
 ## Working rules
 - Work in small verifiable steps; run `pnpm lint && pnpm typecheck && pnpm build` before claiming done.
+- `next lint` no longer exists (Next 16): `pnpm lint` runs `eslint .` with the flat config in `eslint.config.mjs`.
+- DB migrations: edit `src/db/schema.ts` → `pnpm db:generate` → commit `drizzle/`. The client applies them on first open.
 - Commit after each coherent step with conventional commits (`feat:`, `fix:`, `chore:`).
 - When you need a missing value, ask Ramin in Persian in one short list — do not stall on it,
   keep the item locked and continue.
