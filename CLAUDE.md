@@ -42,8 +42,8 @@ docs/reference/                site screenshots (design inspiration only)
 - Product content lives in `src/content/products.ts` as a typed array. Each product has
   `status: 'active' | 'coming_soon'` and each action has `enabled: boolean` + `href` or `content`.
 - A locked action renders visibly (dimmed, lock glyph, tooltip «به‌زودی») — never hidden.
-- Support action for every product links to `https://support.softmiliac.com` with the product preselected
-  (query param; confirm the exact param name with Ramin before hardcoding).
+- Support action for every product is a plain link to `https://support.softmiliac.com` (no query param —
+  the user picks the company and section on the support site itself; decided by Ramin).
 - Consultation form: Server Action → zod validation → insert into `consult_requests` → success state.
   Admin lists requests, changes status (new / contacted / closed), adds notes, exports CSV.
 

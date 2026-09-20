@@ -65,6 +65,7 @@ export const ACTION_LABELS: Record<ActionKey, string> = {
   ai: "هوش مصنوعی",
 };
 
+// Plain link — the user picks the company and section on the support site itself.
 const SUPPORT_URL = "https://support.softmiliac.com";
 
 export const products: readonly Product[] = [
@@ -83,6 +84,7 @@ export const products: readonly Product[] = [
       mark: "/brand/millionaire/mark.svg",
     },
     actions: [
+      // Accounting web panel is still being built (data.md §3.1) — locked.
       { key: "panel", label: ACTION_LABELS.panel, enabled: false, reason: "missing_data" },
       { key: "support", label: ACTION_LABELS.support, enabled: true, href: SUPPORT_URL },
       { key: "pricing", label: ACTION_LABELS.pricing, enabled: false, reason: "missing_data" },
@@ -102,9 +104,11 @@ export const products: readonly Product[] = [
     status: "active",
     accent: { primary: "#981818", secondary: "#600000" },
     logo: {
-      // data.md names lockup-red.svg; it embeds a live <text> tagline with a
-      // non-embedded font, so the mark is used until Ramin confirms (see questions).
+      // The deep-red wordmark of the full lockup has no contrast on dark surfaces,
+      // so dark tiles show the 3D mark; light surfaces get the full new lockup
+      // (exported from LOGO.ai with the tagline outlined to paths).
       landing: "/brand/crm/mark-red.svg",
+      landingLight: "/brand/crm/lockup-red.svg",
       mark: "/brand/crm/mark-red.svg",
     },
     actions: [
@@ -131,7 +135,7 @@ export const products: readonly Product[] = [
       mark: "/brand/shopmojahaz/mark.svg",
     },
     actions: [
-      { key: "panel", label: ACTION_LABELS.panel, enabled: false, reason: "missing_data" },
+      { key: "panel", label: ACTION_LABELS.panel, enabled: true, href: "https://shopmojahaz.ir" },
       { key: "support", label: ACTION_LABELS.support, enabled: true, href: SUPPORT_URL },
       { key: "pricing", label: ACTION_LABELS.pricing, enabled: true, href: "https://shopmojahaz.ir" },
       {
@@ -161,14 +165,13 @@ export const products: readonly Product[] = [
     status: "active",
     accent: { primary: "#101840", secondary: "#f8b878" },
     logo: {
-      // data.md names lockup-fa.svg (navy on navy + live <text>); the white/peach
-      // variant is legible on the dark tile. Pending Ramin's confirmation.
+      // lockup-fa.svg is navy on navy with a live <text>; white/peach reads on dark.
       landing: "/brand/menuclub/wordmark-en-peach-lg.svg",
       landingLight: "/brand/menuclub/logo-full-en.svg",
       mark: "/brand/menuclub/mark.svg",
     },
     actions: [
-      { key: "panel", label: ACTION_LABELS.panel, enabled: false, reason: "missing_data" },
+      { key: "panel", label: ACTION_LABELS.panel, enabled: true, href: "https://menusclub.ir" },
       { key: "support", label: ACTION_LABELS.support, enabled: true, href: SUPPORT_URL },
       { key: "pricing", label: ACTION_LABELS.pricing, enabled: false, reason: "missing_data" },
       { key: "details", label: ACTION_LABELS.details, enabled: true },
@@ -185,8 +188,7 @@ export const products: readonly Product[] = [
     status: "coming_soon",
     accent: { primary: "#c80840", secondary: "#101840" },
     logo: {
-      // data.md names logo-full.svg (crimson + navy); the white/crimson mark reads
-      // on the dark tile. Pending Ramin's confirmation.
+      // logo-full.svg is crimson + navy (vanishes on dark); white/crimson mark for dark.
       landing: "/brand/garson/mark.svg",
       landingLight: "/brand/garson/logo-full.svg",
       mark: "/brand/garson/mark-round.svg",
