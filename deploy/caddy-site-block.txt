@@ -1,0 +1,5 @@
+# Append to the existing host Caddyfile (e.g. /etc/caddy/Caddyfile), then: systemctl reload caddy
+app.softmiliac.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000
+}

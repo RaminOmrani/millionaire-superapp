@@ -1,0 +1,21 @@
+# Use this instead of docker-compose.yml when ports 80/443 on the VPS are already
+# served by another reverse proxy (nginx, another Caddy, Traefik, …):
+#
+#   docker compose -f docker-compose.external-proxy.yml up -d --build
+#
+# The app listens on 127.0.0.1:${APP_PORT:-3000} only; point the existing proxy at it
+# (snippets for nginx and Caddy in README.md → "Existing reverse proxy").
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_PATH: /app/data/app.db
+    volumes:
+      - app-data:/app/data
+    ports:
+      - "127.0.0.1:${APP_PORT:-3000}:3000"
+
+volumes:
+  app-data:
