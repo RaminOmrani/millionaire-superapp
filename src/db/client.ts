@@ -6,11 +6,12 @@ import { drizzle } from "drizzle-orm/better-sqlite3";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import * as schema from "./schema";
 
-const DB_PATH = process.env.DATABASE_PATH ?? "./data/app.db";
+export type Db = ReturnType<typeof open>;
 
 function open() {
-  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-  const sqlite = new Database(DB_PATH);
+  const dbPath = process.env.DATABASE_PATH ?? "./data/app.db";
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+  const sqlite = new Database(dbPath);
   sqlite.pragma("journal_mode = WAL");
   sqlite.pragma("foreign_keys = ON");
   const db = drizzle(sqlite, { schema });
@@ -19,10 +20,12 @@ function open() {
   return db;
 }
 
-// Reuse one connection across hot reloads in dev.
-const globalForDb = globalThis as unknown as { __db?: ReturnType<typeof open> };
+// One connection per process; lazy so `next build` never touches the file.
+const globalForDb = globalThis as unknown as { __db?: Db };
 
-export const db = globalForDb.__db ?? open();
-if (process.env.NODE_ENV !== "production") globalForDb.__db = db;
+export function getDb(): Db {
+  if (!globalForDb.__db) globalForDb.__db = open();
+  return globalForDb.__db;
+}
 
 export { schema };

@@ -19,6 +19,8 @@ export type ProductAction =
       href?: string;
       /** Inline content rendered on the hub page */
       content?: readonly string[];
+      /** Small caption under the content — e.g. what is still pending */
+      note?: string;
     }
   | {
       key: ActionKey;
@@ -137,7 +139,15 @@ export const products: readonly Product[] = [
     actions: [
       { key: "panel", label: ACTION_LABELS.panel, enabled: true, href: "https://shopmojahaz.ir" },
       { key: "support", label: ACTION_LABELS.support, enabled: true, href: SUPPORT_URL },
-      { key: "pricing", label: ACTION_LABELS.pricing, enabled: true, href: "https://shopmojahaz.ir" },
+      {
+        key: "pricing",
+        label: ACTION_LABELS.pricing,
+        enabled: true,
+        href: "https://shopmojahaz.ir",
+        // Four suggested packages (data.md §3.3); price and contents are still ❓.
+        content: ["پکیج اقتصادی", "پکیج نقره‌ای", "پکیج ویژه", "پکیج طلایی"],
+        note: "قیمت و محتوای هر پکیج به‌زودی",
+      },
       {
         key: "details",
         label: ACTION_LABELS.details,

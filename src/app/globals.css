@@ -50,7 +50,7 @@
   color-scheme: dark;
 }
 
-:root[data-theme="light"] {
+[data-theme="light"] {
   --bg: #f7f5f2;
   --bg-elevated: #ffffff;
   --fg: #1a1a1a;

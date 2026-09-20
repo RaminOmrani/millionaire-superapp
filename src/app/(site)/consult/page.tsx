@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Clock, Lock, Mail, Phone } from "lucide-react";
+import { Clock, Mail, Phone } from "lucide-react";
+import { ConsultForm } from "@/components/product/ConsultForm";
 import { holding } from "@/content/holding";
 import { toPersianDigits } from "@/lib/persian-digits";
 
@@ -8,7 +9,6 @@ export const metadata: Metadata = {
   description: `تماس با ${holding.nameFa}`,
 };
 
-/** Consultation — phase 1 shows contact details; the form (Server Action) lands in phase 2. */
 export default function ConsultPage() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
@@ -16,7 +16,7 @@ export default function ConsultPage() {
         <div className="lg:col-span-5">
           <h1 className="display text-balance text-4xl sm:text-5xl">درخواست مشاوره</h1>
           <p className="mt-4 text-lg text-fg-muted">
-            برای انتخاب محصول مناسب کسب‌وکارتان با ما در تماس باشید.
+            برای انتخاب محصول مناسب کسب‌وکارتان فرم را پر کنید یا مستقیم تماس بگیرید.
           </p>
 
           <dl className="mt-10 space-y-5 text-sm">
@@ -52,18 +52,8 @@ export default function ConsultPage() {
           </dl>
         </div>
 
-        <div className="lg:col-span-7">
-          <div
-            className="grain flex min-h-72 items-center justify-center rounded-tile border border-line bg-surface p-10 text-center"
-            aria-disabled="true"
-            title="به‌زودی"
-          >
-            <div className="text-fg-muted">
-              <Lock className="mx-auto size-6" aria-hidden />
-              <p className="mt-3 font-semibold">فرم مشاوره</p>
-              <p className="mt-1 text-sm">به‌زودی</p>
-            </div>
-          </div>
+        <div className="relative lg:col-span-7">
+          <ConsultForm />
         </div>
       </div>
     </section>
