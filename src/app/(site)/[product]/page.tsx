@@ -43,8 +43,9 @@ export default async function ProductHubPage({ params }: { params: Params }) {
   const pricing = product.actions.find((a) => a.key === "pricing");
   const hasPlans = !!pricing?.enabled && !!pricing.plans?.length;
   // With real plans the pricing card becomes a full-width row at the end; details widens to match.
+  const PLAN_ORDER: ActionKey[] = ["panel", "support", "ai", "details", "pricing"];
   const ordered = hasPlans
-    ? [...product.actions.filter((a) => a.key !== "pricing"), ...product.actions.filter((a) => a.key === "pricing")]
+    ? [...product.actions].sort((a, b) => PLAN_ORDER.indexOf(a.key) - PLAN_ORDER.indexOf(b.key))
     : product.actions;
   const layoutFor = (key: ActionKey) => {
     if (!hasPlans) return ACTION_LAYOUT[key];
