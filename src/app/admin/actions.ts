@@ -25,7 +25,11 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
   const expectedUser = process.env.ADMIN_USERNAME ?? "";
   const expectedPass = process.env.ADMIN_PASSWORD ?? "";
   if (!expectedUser || !expectedPass) {
-    return { error: "ادمین پیکربندی نشده است (ADMIN_USERNAME / ADMIN_PASSWORD).", username };
+    return {
+      error:
+        "ادمین پیکربندی نشده است: ADMIN_USERNAME یا ADMIN_PASSWORD در .env خالی است (اگر رمز $ دارد، مقدار را داخل کوتیشن تکی بگذار).",
+      username,
+    };
   }
 
   const ok = safeEqual(parsed.data.username, expectedUser) && safeEqual(parsed.data.password, expectedPass);
