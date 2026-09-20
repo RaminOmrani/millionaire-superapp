@@ -13,11 +13,11 @@
 - [ ] SMTP برای ارسال ایمیل اعلان (`SMTP_*` در `.env` سرور)
 
 ## ۴) زیرساخت — یادآوری شود
-- [ ] بک‌آپ خودکار روزانه‌ی SQLite با cron روی VPS
+- [x] اسکریپت بک‌آپ (`deploy/backup.sh`) — نصب cron روی سرور: دستور داخل فایل
 - [ ] PR و merge برنچ به `main`
 - [ ] Private کردن مخزن + Deploy Key روی سرور برای `git pull`
-- [ ] اسکریپت یک‌خطی آپدیت روی سرور (`deploy/update.sh`)
-- [ ] CI (GitHub Actions): lint + typecheck + build روی هر push
+- [x] اسکریپت یک‌خطی آپدیت روی سرور (`deploy/update.sh`)
+- [x] CI (GitHub Actions): lint + typecheck + build روی هر push
 - [ ] تعویض `SESSION_SECRET` روی سرور (در اسکرین‌شات دیده شد)
 
 ## انجام‌شده

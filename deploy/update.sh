@@ -3,8 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 COMPOSE="docker compose -f docker-compose.external-proxy.yml"
-mkdir -p backups
-$COMPOSE cp app:/app/data/app.db "backups/app-$(date +%F-%H%M).db" 2>/dev/null || echo "no DB yet, skipping backup"
+bash deploy/backup.sh 2>/dev/null || echo "no DB yet, skipping backup"
 git pull --ff-only
 $COMPOSE up -d --build
 $COMPOSE ps

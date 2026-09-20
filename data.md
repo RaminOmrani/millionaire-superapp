@@ -56,14 +56,14 @@
 **Vazirmatn 800/900** برای تیترها. اگر بعداً فایل IRANSansX را دادی، فقط `@font-face` عوض می‌شود.
 اعداد فارسی: `font-variant-numeric` + تبدیل ارقام در نمایش قیمت.
 
-**لوگوها** — پکیج کامل SVG در `public/brand/<product>/` (فایل منبع: `docs/brand-source/LOGO.ai`):
+**لوگوها** — پکیج کامل SVG در `public/brand/<product>/` (فایل منبع: `docs/brand-source/LOGO.ai`). هیچ فایلی تگ `<text>` زنده ندارد؛ تگ‌لاین‌ها با PyMuPDF از AI با متنِ مسیرشده خروجی گرفته شده‌اند:
 
 | محصول | پوشه | فایل اصلی برای کارت لندینگ | نشان (mark) |
 |---|---|---|---|
 | حسابداری میلیونر | `millionaire/` | `logo-horizontal.svg` | `mark.svg` |
 | CRM میلیونر | `crm/` | تیره: `mark-red.svg` · روشن: `lockup-red.svg` (لوگوی جدید، تگ‌لاین به مسیر تبدیل شده؛ وردمارک قرمز تیره روی پس‌زمینه‌ی تیره کنتراست ندارد) | `mark-red.svg` |
 | شاپ مجهز | `shopmojahaz/` | `logo-full-fa.svg` | `mark.svg` |
-| منوکلاب | `menuclub/` | تیره: `wordmark-en-peach-lg.svg` · روشن: `logo-full-en.svg` (`lockup-fa.svg` متن زنده دارد و navy روی تیره محو می‌شود) | `mark.svg` (+ `swoosh-*.svg` برای تزئین پس‌زمینه) |
+| منوکلاب | `menuclub/` | تیره: `swoosh-2.svg` (لاک‌آپ فارسی سفید) · روشن: `lockup-fa.svg` (لاک‌آپ فارسی navy) — تگ‌لاین‌ها از LOGO.ai به مسیر تبدیل شده‌اند | `mark.svg` |
 | گارسون‌یار | `garson/` | تیره: `mark.svg` · روشن: `logo-full.svg` | `mark-round.svg` |
 
 اسکرین‌شات سایت‌ها → `docs/reference/` (فقط برای الهام طراحی، وارد UI نمی‌شوند).

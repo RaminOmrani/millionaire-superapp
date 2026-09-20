@@ -175,9 +175,9 @@ export const products: readonly Product[] = [
     status: "active",
     accent: { primary: "#101840", secondary: "#f8b878" },
     logo: {
-      // lockup-fa.svg is navy on navy with a live <text>; white/peach reads on dark.
-      landing: "/brand/menuclub/wordmark-en-peach-lg.svg",
-      landingLight: "/brand/menuclub/logo-full-en.svg",
+      // Persian lockups (tagline outlined to paths from LOGO.ai): white on dark, navy on light.
+      landing: "/brand/menuclub/swoosh-2.svg",
+      landingLight: "/brand/menuclub/lockup-fa.svg",
       mark: "/brand/menuclub/mark.svg",
     },
     actions: [
