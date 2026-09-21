@@ -1,12 +1,14 @@
+import { MobileCtaBar } from "@/components/brand/MobileCtaBar";
 import { SiteFooter } from "@/components/brand/SiteFooter";
 import { SiteHeader } from "@/components/brand/SiteHeader";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col pb-20 sm:pb-0">
       <SiteHeader />
       <main className="flex-1">{children}</main>
       <SiteFooter />
+      <MobileCtaBar />
     </div>
   );
 }

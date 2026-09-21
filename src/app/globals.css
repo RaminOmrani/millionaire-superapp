@@ -54,13 +54,13 @@
   --bg: #f7f5f2;
   --bg-elevated: #ffffff;
   --fg: #1a1a1a;
-  --fg-muted: color-mix(in oklab, #1a1a1a 64%, transparent);
-  --fg-faint: color-mix(in oklab, #1a1a1a 42%, transparent);
-  --line: color-mix(in oklab, #1a1a1a 10%, transparent);
-  --surface: #ffffff;
+  --fg-muted: color-mix(in oklab, #1a1a1a 66%, transparent);
+  --fg-faint: color-mix(in oklab, #1a1a1a 46%, transparent);
+  --line: color-mix(in oklab, #1a1a1a 14%, transparent);
+  --surface: #fffdfa;
   --ring: #980000;
-  --grain-opacity: 0.05;
-  --tile-glow: 0.22;
+  --grain-opacity: 0.06;
+  --tile-glow: 0.34;
   color-scheme: light;
 }
 

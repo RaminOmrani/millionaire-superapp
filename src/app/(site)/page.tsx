@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowDown, MessageSquareText } from "lucide-react";
+import { HeroVisual } from "@/components/brand/HeroVisual";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { holding } from "@/content/holding";
 import { getResolvedProducts } from "@/content/resolve";
@@ -32,8 +33,8 @@ export default function LandingPage() {
         />
 
         <div className="mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 sm:pt-24 lg:px-8 lg:pb-24 lg:pt-32">
-          <div className="grid items-end gap-10 lg:grid-cols-12">
-            <div className="lg:col-span-8">
+          <div className="grid items-center gap-12 lg:grid-cols-12">
+            <div className="lg:col-span-7">
               <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-surface/60 px-3 py-1 text-xs font-semibold text-fg-muted">
                 <span className="size-1.5 rounded-full bg-brand-red" aria-hidden />
                 {holding.subtitle}
@@ -64,30 +65,34 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <dl className="grid grid-cols-2 gap-6 border-t border-line pt-6 text-sm lg:col-span-4 lg:border-t-0 lg:border-r lg:pr-8 lg:pt-0">
-              <div>
-                <dt className="text-fg-faint">محصولات فعال</dt>
-                <dd className="display mt-1 text-4xl">{toPersianDigits(activeCount)}</dd>
-              </div>
-              <div>
-                <dt className="text-fg-faint">به‌زودی</dt>
-                <dd className="display mt-1 text-4xl">{toPersianDigits(products.length - activeCount)}</dd>
-              </div>
-              <div className="col-span-2">
-                <dt className="text-fg-faint">مرکز پشتیبانی مشترک</dt>
-                <dd className="mt-1">
-                  <a
-                    href={holding.supportCenter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ltr-nums font-semibold underline-offset-4 hover:underline"
-                  >
-                    support.softmiliac.com
-                  </a>
-                </dd>
-              </div>
-            </dl>
+            <div className="lg:col-span-5">
+              <HeroVisual className="mx-auto max-w-[420px] lg:max-w-none" />
+            </div>
           </div>
+
+          <dl className="mt-14 grid grid-cols-2 gap-6 border-t border-line pt-6 text-sm sm:grid-cols-3">
+            <div>
+              <dt className="text-fg-faint">محصولات فعال</dt>
+              <dd className="display mt-1 text-3xl">{toPersianDigits(activeCount)}</dd>
+            </div>
+            <div>
+              <dt className="text-fg-faint">به‌زودی</dt>
+              <dd className="display mt-1 text-3xl">{toPersianDigits(products.length - activeCount)}</dd>
+            </div>
+            <div className="col-span-2 sm:col-span-1">
+              <dt className="text-fg-faint">مرکز پشتیبانی مشترک</dt>
+              <dd className="mt-1">
+                <a
+                  href={holding.supportCenter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ltr-nums font-semibold underline-offset-4 hover:underline"
+                >
+                  support.softmiliac.com
+                </a>
+              </dd>
+            </div>
+          </dl>
         </div>
       </section>
 
