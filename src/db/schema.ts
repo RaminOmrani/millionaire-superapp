@@ -93,3 +93,36 @@ export const loginAttempts = sqliteTable("login_attempts", {
     .notNull()
     .default(sql`(unixepoch())`),
 });
+
+/* ------------------------------------------------------------------ */
+/* Promo banners — managed from /admin/banners                          */
+/* ------------------------------------------------------------------ */
+
+export const BANNER_PLACEMENTS = ["top", "middle"] as const;
+export const BANNER_AUDIENCES = ["both", "web", "app"] as const;
+
+export const banners = sqliteTable("banners", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title"),
+  subtitle: text("subtitle"),
+  ctaLabel: text("cta_label"),
+  href: text("href"),
+  /** "brand" or a product slug — drives the accent colours and the mark shown */
+  theme: text("theme").notNull().default("brand"),
+  /** File name under DATA_DIR/uploads/banners, served from /media/banners/<file> */
+  image: text("image"),
+  placement: text("placement", { enum: BANNER_PLACEMENTS }).notNull().default("top"),
+  audience: text("audience", { enum: BANNER_AUDIENCES }).notNull().default("both"),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  sort: integer("sort").notNull().default(0),
+  startsAt: integer("starts_at", { mode: "timestamp" }),
+  endsAt: integer("ends_at", { mode: "timestamp" }),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type Banner = typeof banners.$inferSelect;

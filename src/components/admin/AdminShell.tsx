@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { BarChart3, Inbox, LogOut, Package, Settings } from "lucide-react";
+import { BarChart3, GalleryHorizontal, Inbox, LogOut, Package, Settings } from "lucide-react";
 import { logout } from "@/app/admin/actions";
 import { holding } from "@/content/holding";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { href: "/admin", label: "درخواست‌ها", icon: Inbox },
   { href: "/admin/products", label: "محصولات", icon: Package },
+  { href: "/admin/banners", label: "بنرها", icon: GalleryHorizontal },
   { href: "/admin/stats", label: "آمار", icon: BarChart3 },
   { href: "/admin/settings", label: "تنظیمات", icon: Settings },
 ] as const;

@@ -34,10 +34,11 @@ Migrations are applied automatically when the app opens `DATABASE_PATH` (default
 | `/about` | Holding info (locked fields shown as «به‌زودی») |
 | `/admin` | Requests: search, filters, pagination, bulk status, CSV export (`/api/admin/export`) |
 | `/admin/products` | Content management: status, description, features, per-action links, pricing plans |
+| `/admin/banners` | Promo banners: text or image, top/middle slot, web/app/both, date window, live preview |
 | `/admin/stats` | Counts, 30-day chart, per-product breakdown, login log |
 | `/admin/settings` | Change admin password, notification e-mail (needs `SMTP_*`) |
 | `/admin/login` | Single admin, iron-session cookie, throttled after 5 failures |
-| `/sitemap.xml`, `/robots.txt`, `/manifest.webmanifest` | SEO + installable PWA |
+| `/sitemap.xml`, `/robots.txt`, `/manifest.webmanifest`, `/sw.js`, `/offline` | SEO + installable PWA (app mode: `?app=1`) |
 
 ## Deploy (Ubuntu VPS)
 

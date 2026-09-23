@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ArrowDown, MessageSquareText } from "lucide-react";
 import { HeroVisual } from "@/components/brand/HeroVisual";
+import { BannerCarousel } from "@/components/brand/BannerCarousel";
 import { Launcher, type LauncherProduct } from "@/components/brand/Launcher";
+import { getLiveBanners } from "@/content/banners";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { holding } from "@/content/holding";
 import { getResolvedProducts } from "@/content/resolve";
@@ -23,6 +25,8 @@ const SHORT_NAMES: Record<string, string> = {
 export default function LandingPage() {
   const products = getResolvedProducts();
   const activeCount = products.filter((p) => p.status === "active").length;
+  const topBanners = getLiveBanners("top");
+  const midBanners = getLiveBanners("middle");
   const launcherProducts: LauncherProduct[] = products.map((p) => ({
     slug: p.slug,
     nameFa: p.nameFa,
@@ -45,16 +49,29 @@ export default function LandingPage() {
               "radial-gradient(60% 80% at 80% 0%, color-mix(in oklab, var(--color-brand-red) 30%, transparent), transparent 70%)",
           }}
         />
-        <div className="mx-auto max-w-5xl px-4 pt-6 sm:px-6 sm:pt-12 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 pt-6 sm:px-6 sm:pt-12 lg:px-8 app:pt-5">
           <p className="mb-3 text-sm font-semibold text-fg-muted sm:mb-4 sm:text-base">
-            به پورتال {holding.nameFa} خوش آمدید
+            <span className="app:hidden">به پورتال {holding.nameFa} خوش آمدید</span>
+            <span className="hidden app:inline">سلام؛ امروز سراغ کدام محصول می‌روید؟</span>
           </p>
-          <Launcher products={launcherProducts} index={buildSearchIndex(products)} supportUrl={holding.supportCenter} />
+          <Launcher
+            products={launcherProducts}
+            index={buildSearchIndex(products)}
+            supportUrl={holding.supportCenter}
+            topSlot={topBanners.length > 0 ? <BannerCarousel banners={topBanners} size="top" /> : null}
+          />
         </div>
       </section>
 
+      {/* ---------- Mid-page promo slot (admin-managed; renders nothing when empty) ---------- */}
+      {midBanners.length > 0 && (
+        <section className="mx-auto mt-10 max-w-5xl px-4 sm:mt-14 sm:px-6 lg:px-8">
+          <BannerCarousel banners={midBanners} size="middle" />
+        </section>
+      )}
+
       {/* ---------- Banner ---------- */}
-      <section className="mx-auto mt-10 max-w-7xl px-4 sm:mt-14 sm:px-6 lg:px-8">
+      <section className="mx-auto mt-10 max-w-7xl px-4 sm:mt-14 sm:px-6 lg:px-8 app:hidden">
         <div className="grain relative overflow-hidden rounded-[2rem] border border-line bg-surface">
           <div
             aria-hidden
@@ -101,12 +118,12 @@ export default function LandingPage() {
       </section>
 
       {/* ---------- Products ---------- */}
-      <section id="products" className="mt-16 scroll-mt-24 sm:mt-24">
+      <section id="products" className="mt-16 scroll-mt-24 sm:mt-24 app:mt-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <header className="mb-8 max-w-2xl sm:mb-10">
+          <header className="mb-8 max-w-2xl sm:mb-10 app:mb-5">
             <p className="text-sm font-bold text-brand-red-light light:text-brand-red">محصولات هلدینگ</p>
             <h2 className="display mt-2 text-3xl sm:text-4xl">یک برند برای هر نیاز</h2>
-            <p className="mt-3 text-base leading-8 text-fg-muted">
+            <p className="mt-3 text-base leading-8 text-fg-muted app:hidden">
               هر محصول، یک برند مستقل زیر یک سقف است. برای ورود به پنل، پشتیبانی و تعرفه‌ها روی کارت هر محصول بزنید.
             </p>
           </header>

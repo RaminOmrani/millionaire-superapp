@@ -36,7 +36,8 @@
 }
 
 /* ---------- Semantic surface tokens (theme-aware) ---------- */
-:root {
+:root,
+[data-theme="dark"] {
   --bg: #0f0f12;
   --bg-elevated: #151519;
   --fg: #f7f5f2;
@@ -76,6 +77,8 @@
 }
 
 @custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+/* Installed PWA (standalone) — set on <html> by the boot script in app/layout.tsx */
+@custom-variant app (&:where([data-app="1"], [data-app="1"] *));
 
 /* ---------- Base ---------- */
 @layer base {

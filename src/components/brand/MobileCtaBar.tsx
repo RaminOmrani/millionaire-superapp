@@ -11,7 +11,7 @@ export function MobileCtaBar() {
   if (pathname.startsWith("/consult")) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-bg/85 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl sm:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-bg/85 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl sm:hidden app:hidden">
       <div className="grid grid-cols-2 gap-2">
         <a
           href={`tel:${holding.phone.replace(/-/g, "")}`}

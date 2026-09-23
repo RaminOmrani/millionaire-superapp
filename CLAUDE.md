@@ -50,6 +50,15 @@ docs/reference/                site screenshots (design inspiration only)
   (`getResolvedProducts()`); public pages read the resolved data and are `force-dynamic`.
   products.ts stays the data.md baseline — never edit it to reflect panel changes.
 - A locked action renders visibly (dimmed, lock glyph, tooltip «به‌زودی») — never hidden.
+- Website vs installed app (PWA): the boot script in `app/layout.tsx` sets `data-app="1"` on `<html>` in
+  standalone mode (or with `?app=1` for testing, `?app=0` to clear). Style differences with the Tailwind
+  `app:` variant only (e.g. `app:hidden`, `hidden app:block`) — never branch in JS render, to avoid flashes.
+  App mode: compact header, bottom tab bar (`AppTabBar`), no hero banner/footer/mobile CTA bar.
+- Promo banners (table `banners`, `/admin/banners`): slots `top` (between search and icons) and `middle`;
+  audience both/web/app; optional date window; uploaded images live in `<data dir>/uploads/banners`
+  and are served by `/media/banners/[file]` (raster only, magic-byte checked, 1.5 MB). No banner → no slot.
+- `public/sw.js`: network-first for pages (never serves stale content), cache-first for fonts/brand/_next/static,
+  `/offline` fallback. Bump `VERSION` when changing precached files.
 - Support action for every product is a plain link to `https://support.softmiliac.com` (no query param —
   the user picks the company and section on the support site itself; decided by Ramin).
 - Consultation form: Server Action → zod validation → insert into `consult_requests` → success state.

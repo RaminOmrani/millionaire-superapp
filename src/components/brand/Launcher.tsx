@@ -23,10 +23,12 @@ interface Props {
   products: LauncherProduct[];
   index: SearchItem[];
   supportUrl: string;
+  /** Rendered between the search box and the icon grid (promo banners) */
+  topSlot?: React.ReactNode;
 }
 
 /** Super-app style entry: search first, then an icon grid of products and services. */
-export function Launcher({ products, index, supportUrl }: Props) {
+export function Launcher({ products, index, supportUrl, topSlot }: Props) {
   const reduce = useReducedMotion();
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -49,9 +51,18 @@ export function Launcher({ products, index, supportUrl }: Props) {
         inputRef.current?.focus();
       }
     }
+    function onHash() {
+      if (window.location.hash === "#search") {
+        inputRef.current?.focus();
+        inputRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+      }
+    }
+    onHash();
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);
+    window.addEventListener("hashchange", onHash);
     return () => {
+      window.removeEventListener("hashchange", onHash);
       document.removeEventListener("mousedown", onDown);
       document.removeEventListener("keydown", onKey);
     };
@@ -94,7 +105,7 @@ export function Launcher({ products, index, supportUrl }: Props) {
   return (
     <div className="space-y-7">
       {/* ---------- search ---------- */}
-      <div ref={boxRef} className="relative z-30">
+      <div ref={boxRef} id="search" className="relative z-30 scroll-mt-24">
         <label htmlFor="launcher-search" className="sr-only">
           جست‌وجو در محصولات و خدمات
         </label>
@@ -191,6 +202,8 @@ export function Launcher({ products, index, supportUrl }: Props) {
           </div>
         )}
       </div>
+
+      {topSlot}
 
       {/* ---------- icon grid ---------- */}
       <nav aria-label="محصولات و خدمات">

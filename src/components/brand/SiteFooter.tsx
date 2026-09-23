@@ -8,7 +8,7 @@ export function SiteFooter() {
   const year = toPersianDigits(new Date().toLocaleDateString("fa-IR-u-nu-latn", { year: "numeric" }));
 
   return (
-    <footer className="relative mt-24 border-t border-line/60">
+    <footer className="relative mt-24 border-t border-line/60 app:hidden">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:px-8">
         <div className="lg:col-span-5">
           <Image
