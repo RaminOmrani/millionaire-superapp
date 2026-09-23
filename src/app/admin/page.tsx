@@ -140,7 +140,7 @@ export default async function AdminHomePage({ searchParams }: { searchParams: Pr
             پاک کردن
           </Link>
           <span className="mr-auto text-xs text-fg-muted">
-            {toPersianDigits(total)} نتیجه · صفحه {toPersianDigits(page)} از {toPersianDigits(pages)}
+            {toPersianDigits(total)} نتیجه، صفحه {toPersianDigits(page)} از {toPersianDigits(pages)}
           </span>
         </div>
       </form>
