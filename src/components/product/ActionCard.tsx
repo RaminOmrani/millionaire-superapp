@@ -38,7 +38,9 @@ export function ActionCard({ action, index, className, children }: Props) {
         transition: { duration: 0.6, delay: 0.05 + index * 0.07, ease: [0.16, 1, 0.3, 1] as const },
       };
 
+  const anchor = { id: action.key, className: "scroll-mt-28" };
   const shell = cn(
+    anchor.className,
     "grain group relative isolate flex min-h-44 flex-col overflow-hidden rounded-tile border bg-surface p-6",
     "border-[color-mix(in_oklab,var(--accent)_28%,transparent)]",
     "transition-[border-color,box-shadow,transform] duration-500",
@@ -90,7 +92,7 @@ export function ActionCard({ action, index, className, children }: Props) {
 
   if (locked) {
     return (
-      <motion.div {...entrance} className={shell} aria-disabled="true" title={COMING_SOON} tabIndex={0}>
+      <motion.div {...entrance} id={anchor.id} className={shell} aria-disabled="true" title={COMING_SOON} tabIndex={0}>
         {body}
       </motion.div>
     );
@@ -100,6 +102,7 @@ export function ActionCard({ action, index, className, children }: Props) {
     return (
       <motion.a
         {...entrance}
+        id={anchor.id}
         href={action.href}
         target="_blank"
         rel="noopener noreferrer"
@@ -112,7 +115,7 @@ export function ActionCard({ action, index, className, children }: Props) {
   }
 
   return (
-    <motion.section {...entrance} className={shell} aria-label={action.label}>
+    <motion.section {...entrance} id={anchor.id} className={shell} aria-label={action.label}>
       {body}
     </motion.section>
   );

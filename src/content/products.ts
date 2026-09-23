@@ -53,8 +53,10 @@ export interface Product {
     landing: string;
     /** Variant for light surfaces when `landing` has white parts that vanish */
     landingLight?: string;
-    /** Compact mark */
+    /** Compact mark / app icon for dark surfaces */
     mark: string;
+    /** Mark variant for light surfaces when `mark` has white parts that vanish */
+    markLight?: string;
   };
   actions: readonly ProductAction[];
 }
@@ -178,7 +180,8 @@ export const products: readonly Product[] = [
       // Persian lockups (tagline outlined to paths from LOGO.ai): white on dark, navy on light.
       landing: "/brand/menuclub/swoosh-2.svg",
       landingLight: "/brand/menuclub/lockup-fa.svg",
-      mark: "/brand/menuclub/mark.svg",
+      mark: "/brand/menuclub/swoosh-3.svg",
+      markLight: "/brand/menuclub/mark.svg",
     },
     actions: [
       { key: "panel", label: ACTION_LABELS.panel, enabled: true, href: "https://menusclub.ir" },
@@ -202,6 +205,7 @@ export const products: readonly Product[] = [
       landing: "/brand/garson/mark.svg",
       landingLight: "/brand/garson/logo-full.svg",
       mark: "/brand/garson/mark-round.svg",
+      markLight: "/brand/garson/logo-full.svg",
     },
     actions: [
       { key: "panel", label: ACTION_LABELS.panel, enabled: false, reason: "future" },

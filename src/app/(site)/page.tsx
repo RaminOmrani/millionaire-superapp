@@ -1,110 +1,115 @@
 import Link from "next/link";
 import { ArrowDown, MessageSquareText } from "lucide-react";
 import { HeroVisual } from "@/components/brand/HeroVisual";
+import { Launcher, type LauncherProduct } from "@/components/brand/Launcher";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { holding } from "@/content/holding";
 import { getResolvedProducts } from "@/content/resolve";
+import { buildSearchIndex } from "@/content/search-index";
 import { toPersianDigits } from "@/lib/persian-digits";
 
 // Content can be edited from /admin, so render per request (SQLite read is sub-millisecond).
 export const dynamic = "force-dynamic";
 
+/** Short labels under the launcher icons (full names are too long for a 4-column phone grid). */
+const SHORT_NAMES: Record<string, string> = {
+  millionaire: "حسابداری",
+  crm: "CRM",
+  shopmojahaz: "شاپ مجهز",
+  menuclub: "منوکلاب",
+  garson: "گارسون‌یار",
+};
+
 export default function LandingPage() {
   const products = getResolvedProducts();
   const activeCount = products.filter((p) => p.status === "active").length;
+  const launcherProducts: LauncherProduct[] = products.map((p) => ({
+    slug: p.slug,
+    nameFa: p.nameFa,
+    shortName: SHORT_NAMES[p.slug] ?? p.nameFa,
+    locked: p.status !== "active",
+    accent: p.accent.primary,
+    mark: p.logo.mark,
+    markLight: p.logo.markLight,
+  }));
 
   return (
     <>
-      {/* ---------- Hero ---------- */}
-      <section className="grain relative overflow-hidden">
+      {/* ---------- Launcher: search + icons first (super-app pattern) ---------- */}
+      <section className="relative">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10"
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px]"
           style={{
             background:
-              "radial-gradient(60% 50% at 85% 10%, color-mix(in oklab, var(--color-brand-red) 45%, transparent), transparent 70%)," +
-              "radial-gradient(45% 40% at 10% 90%, color-mix(in oklab, var(--color-brand-red-deep) 40%, transparent), transparent 70%)",
+              "radial-gradient(60% 80% at 80% 0%, color-mix(in oklab, var(--color-brand-red) 30%, transparent), transparent 70%)",
           }}
         />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[520px] w-[520px] -translate-x-1/2 rounded-full opacity-40 blur-3xl"
-          style={{ background: "color-mix(in oklab, var(--color-brand-red) 35%, transparent)" }}
-        />
+        <div className="mx-auto max-w-5xl px-4 pt-6 sm:px-6 sm:pt-12 lg:px-8">
+          <p className="mb-3 text-sm font-semibold text-fg-muted sm:mb-4 sm:text-base">
+            به پورتال {holding.nameFa} خوش آمدید
+          </p>
+          <Launcher products={launcherProducts} index={buildSearchIndex(products)} supportUrl={holding.supportCenter} />
+        </div>
+      </section>
 
-        <div className="mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 sm:pt-24 lg:px-8 lg:pb-24 lg:pt-32">
-          <div className="grid items-center gap-12 lg:grid-cols-12">
+      {/* ---------- Banner ---------- */}
+      <section className="mx-auto mt-10 max-w-7xl px-4 sm:mt-14 sm:px-6 lg:px-8">
+        <div className="grain relative overflow-hidden rounded-[2rem] border border-line bg-surface">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10"
+            style={{
+              background:
+                "radial-gradient(70% 90% at 100% 0%, color-mix(in oklab, var(--color-brand-red) 45%, transparent), transparent 65%)," +
+                "radial-gradient(50% 70% at 0% 100%, color-mix(in oklab, var(--color-brand-red-deep) 40%, transparent), transparent 70%)",
+            }}
+          />
+          <div className="grid items-center gap-10 p-6 sm:p-10 lg:grid-cols-12 lg:p-14">
             <div className="lg:col-span-7">
-              <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-surface/60 px-3 py-1 text-xs font-semibold text-fg-muted">
+              <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-line bg-bg/40 px-3 py-1 text-xs font-semibold text-fg-muted">
                 <span className="size-1.5 rounded-full bg-brand-red" aria-hidden />
-                {holding.subtitle}
+                {holding.subtitle}، {toPersianDigits(activeCount)} محصول فعال
               </p>
-              <h1 className="display text-balance text-[2.6rem] leading-[1.1] sm:text-6xl lg:text-7xl">
-                {holding.slogan}
-              </h1>
-              <p className="mt-6 max-w-xl text-lg text-fg-muted sm:text-xl">
-                همه‌ی محصولات {holding.nameFa}، یک‌جا. محصول خود را انتخاب کنید و به پنل، پشتیبانی و
-                تعرفه‌های آن دسترسی داشته باشید.
+              <h1 className="display text-balance text-3xl leading-[1.15] sm:text-5xl lg:text-6xl">{holding.slogan}</h1>
+              <p className="mt-5 max-w-xl text-base leading-8 text-fg-muted sm:text-lg">
+                همه‌ی محصولات {holding.nameFa}، یک‌جا. محصول خود را انتخاب کنید و به پنل، پشتیبانی و تعرفه‌های آن
+                دسترسی داشته باشید.
               </p>
-
-              <div className="mt-10 flex flex-wrap items-center gap-3">
+              <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Link
                   href="#products"
                   className="inline-flex items-center gap-2 rounded-full bg-fg px-6 py-3 text-base font-bold text-bg transition hover:opacity-90 active:scale-[0.98]"
                 >
-                  محصولات
+                  مشاهده‌ی محصولات
                   <ArrowDown className="size-4" aria-hidden />
                 </Link>
                 <Link
                   href="/consult"
-                  className="inline-flex items-center gap-2 rounded-full border border-line bg-surface/60 px-6 py-3 text-base font-bold transition hover:border-fg/30 active:scale-[0.98]"
+                  className="inline-flex items-center gap-2 rounded-full border border-line bg-bg/40 px-6 py-3 text-base font-bold transition hover:border-fg/30 active:scale-[0.98]"
                 >
                   <MessageSquareText className="size-4" aria-hidden />
                   درخواست مشاوره
                 </Link>
               </div>
             </div>
-
-            <div className="lg:col-span-5">
-              <HeroVisual className="mx-auto max-w-[420px] lg:max-w-none" />
+            <div className="hidden lg:col-span-5 lg:block">
+              <HeroVisual className="mx-auto max-w-[400px]" />
             </div>
           </div>
-
-          <dl className="mt-14 grid grid-cols-2 gap-6 border-t border-line pt-6 text-sm sm:grid-cols-3">
-            <div>
-              <dt className="text-fg-faint">محصولات فعال</dt>
-              <dd className="display mt-1 text-3xl">{toPersianDigits(activeCount)}</dd>
-            </div>
-            <div>
-              <dt className="text-fg-faint">به‌زودی</dt>
-              <dd className="display mt-1 text-3xl">{toPersianDigits(products.length - activeCount)}</dd>
-            </div>
-            <div className="col-span-2 sm:col-span-1">
-              <dt className="text-fg-faint">مرکز پشتیبانی مشترک</dt>
-              <dd className="mt-1">
-                <a
-                  href={holding.supportCenter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ltr-nums font-semibold underline-offset-4 hover:underline"
-                >
-                  support.softmiliac.com
-                </a>
-              </dd>
-            </div>
-          </dl>
         </div>
       </section>
 
       {/* ---------- Products ---------- */}
-      <section id="products" className="scroll-mt-24">
+      <section id="products" className="mt-16 scroll-mt-24 sm:mt-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-8 flex items-end justify-between gap-6 sm:mb-10">
-            <h2 className="display text-3xl sm:text-4xl">محصولات</h2>
-            <p className="max-w-xs text-sm text-fg-muted">
-              هر محصول، یک برند مستقل زیر یک سقف. برای ورود، روی کارت بزنید.
+          <header className="mb-8 max-w-2xl sm:mb-10">
+            <p className="text-sm font-bold text-brand-red-light light:text-brand-red">محصولات هلدینگ</p>
+            <h2 className="display mt-2 text-3xl sm:text-4xl">یک برند برای هر نیاز</h2>
+            <p className="mt-3 text-base leading-8 text-fg-muted">
+              هر محصول، یک برند مستقل زیر یک سقف است. برای ورود به پنل، پشتیبانی و تعرفه‌ها روی کارت هر محصول بزنید.
             </p>
-          </div>
+          </header>
           <ProductGrid products={products} />
         </div>
       </section>
