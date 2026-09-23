@@ -50,6 +50,8 @@ docs/reference/                site screenshots (design inspiration only)
   (`getResolvedProducts()`); public pages read the resolved data and are `force-dynamic`.
   products.ts stays the data.md baseline — never edit it to reflect panel changes.
 - A locked action renders visibly (dimmed, lock glyph, tooltip «به‌زودی») — never hidden.
+- A `coming_soon` product is «not launched yet», not closed: its tile/icon open the hub (intro page) with a
+  clock «به‌زودی» badge; only its unavailable actions carry the lock.
 - Website vs installed app (PWA): the boot script in `app/layout.tsx` sets `data-app="1"` on `<html>` in
   standalone mode (or with `?app=1` for testing, `?app=0` to clear). Style differences with the Tailwind
   `app:` variant only (e.g. `app:hidden`, `hidden app:block`) — never branch in JS render, to avoid flashes.
