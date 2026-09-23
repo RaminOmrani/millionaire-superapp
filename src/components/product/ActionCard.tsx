@@ -79,6 +79,7 @@ export function ActionCard({ action, index, className, children }: Props) {
 
       <div className="relative z-10 mt-6 flex-1">
         <h3 className="display text-xl sm:text-2xl">{action.label}</h3>
+        {locked && action.teaser && <p className="mt-2 text-sm leading-7 text-fg-muted">{action.teaser}</p>}
         {external && (
           <p className="ltr-nums mt-1 inline-flex items-center gap-1 text-xs text-fg-faint">
             <ExternalLink className="size-3" aria-hidden />

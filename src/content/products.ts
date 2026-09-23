@@ -28,7 +28,14 @@ export type ProductAction =
       enabled: false;
       /** Why it is locked — shown as a tooltip; user-facing text is always «به‌زودی» */
       reason: "missing_data" | "future";
+      /** One-line teaser shown on the locked card (only text Ramin supplied) */
+      teaser?: string;
     };
+
+export interface FeatureGroup {
+  title: string;
+  items: readonly { text: string; soon?: boolean }[];
+}
 
 export interface Product {
   slug: ProductSlug;
@@ -42,6 +49,12 @@ export interface Product {
   version?: string;
   phone?: string;
   status: ProductStatus;
+  /** Grouped feature list for the details card (richer than the flat `content`) */
+  featureGroups?: readonly FeatureGroup[];
+  /** Short «why this product» points */
+  highlights?: readonly string[];
+  /** Closing brand line on the hub */
+  motto?: string;
   accent: {
     /** Primary accent (hex) */
     primary: string;
@@ -72,6 +85,9 @@ export const ACTION_LABELS: Record<ActionKey, string> = {
 // Plain link — the user picks the company and section on the support site itself.
 const SUPPORT_URL = "https://support.softmiliac.com";
 
+// Ramin: the AI layer differs per product — from analysis and reports to forecasting.
+const AI_TEASER = "از تحلیل و گزارش تا پیش‌بینی؛ متناسب با هر محصول";
+
 export const products: readonly Product[] = [
   {
     slug: "millionaire",
@@ -93,7 +109,7 @@ export const products: readonly Product[] = [
       { key: "support", label: ACTION_LABELS.support, enabled: true, href: SUPPORT_URL },
       { key: "pricing", label: ACTION_LABELS.pricing, enabled: false, reason: "missing_data" },
       { key: "details", label: ACTION_LABELS.details, enabled: true },
-      { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future" },
+      { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future", teaser: AI_TEASER },
     ],
   },
   {
@@ -120,7 +136,7 @@ export const products: readonly Product[] = [
       { key: "support", label: ACTION_LABELS.support, enabled: true, href: SUPPORT_URL },
       { key: "pricing", label: ACTION_LABELS.pricing, enabled: false, reason: "missing_data" },
       { key: "details", label: ACTION_LABELS.details, enabled: true },
-      { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future" },
+      { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future", teaser: AI_TEASER },
     ],
   },
   {
@@ -163,7 +179,7 @@ export const products: readonly Product[] = [
           "کشوی پول",
         ],
       },
-      { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future" },
+      { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future", teaser: AI_TEASER },
     ],
   },
   {
@@ -188,7 +204,7 @@ export const products: readonly Product[] = [
       { key: "support", label: ACTION_LABELS.support, enabled: true, href: SUPPORT_URL },
       { key: "pricing", label: ACTION_LABELS.pricing, enabled: false, reason: "missing_data" },
       { key: "details", label: ACTION_LABELS.details, enabled: true },
-      { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future" },
+      { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future", teaser: AI_TEASER },
     ],
   },
   {
@@ -196,9 +212,130 @@ export const products: readonly Product[] = [
     nameFa: "گارسون‌یار",
     nameEn: "Garson-yar",
     tagline: "سفارش‌گیری هوشمند رستوران",
-    // description ❓ — locked
+    description:
+      "گارسون‌یار یک نرم‌افزار تحت وب حرفه‌ای و کامل برای مدیریت رستوران، کافه و مجموعه‌های غذایی است که تمام نیازهای روزمره شما را در یک پلتفرم یکپارچه پوشش می‌دهد. این سیستم با طراحی مدرن، رابط کاربری فارسی و کاملاً ساده، به شما کمک می‌کند تا سفارش‌گیری، مدیریت میزها، حسابداری و نظارت بر پرسنل را با بیشترین سرعت و دقت انجام دهید.",
     // website garson.softmiliac.com is not public yet — not linked
     status: "coming_soon",
+    motto: "گارسون‌یار؛ دستیار هوشمند شما در مدیریت رستوران.",
+    highlights: [
+      "کامل و یکپارچه — تمام نیازهای مدیریت رستوران در یک نرم‌افزار",
+      "سریع و آسان — سفارش‌گیری در چند ثانیه",
+      "هوشمند — همگام‌سازی خودکار با نرم‌افزارهای موجود",
+      "مدرن — طراحی زیبا و رابط کاربری ساده",
+      "قابل اعتماد — امنیت بالا و مدیریت دقیق دسترسی‌ها",
+      "همه‌جا در دسترس — روی موبایل، تبلت و کامپیوتر",
+    ],
+    featureGroups: [
+      {
+        title: "داشبورد مدیریتی هوشمند",
+        items: [
+          { text: "مشاهده لحظه‌ای آمار فروش، تعداد سفارشات و وضعیت مجموعه در یک نگاه" },
+          { text: "نمودار روند فروش ساعتی امروز در مقایسه با دیروز" },
+          { text: "مشاهده سریع آخرین سفارشات و وضعیت میزها" },
+          { text: "لیست محبوب‌ترین و پرفروش‌ترین محصولات" },
+          { text: "هشدار خودکار برای محصولات ناموجود" },
+        ],
+      },
+      {
+        title: "مدیریت کامل منو",
+        items: [
+          { text: "دسته‌بندی محصولات با تصاویر اختصاصی برای هر دسته" },
+          { text: "جستجوی سریع در بین محصولات" },
+          { text: "فیلترهای هوشمند برای محصولات" },
+          { text: "نمایش موجودی هر محصول به صورت لحظه‌ای" },
+          { text: "بارگذاری سریع منو و بهینه شده برای تعداد بالای محصولات" },
+          { text: "قابلیت مشاهده محصولات ناموجود در یک صفحه‌ی مجزا" },
+        ],
+      },
+      {
+        title: "سفارش‌گیری سریع و آسان",
+        items: [
+          { text: "سبد خرید هوشمند با نمایش لحظه‌ای تعداد و مبلغ" },
+          { text: "افزودن محصول با تعیین تعداد و یادداشت دلخواه" },
+          { text: "دکمه‌های میانبر برای انتخاب سریع تعداد" },
+          { text: "کنترل خودکار موجودی هنگام ثبت سفارش" },
+          { text: "امکان پرداخت در لحظه یا ثبت سفارش در انتظار پرداخت" },
+          { text: "لینک با دستگاه‌های کارتخوان مجموعه", soon: true },
+        ],
+      },
+      {
+        title: "مدیریت میزها",
+        items: [
+          { text: "تعریف میز با نام، ظرفیت، موقعیت و وضعیت" },
+          { text: "تغییر سریع وضعیت میز (آزاد/مشغول/رزرو) از داشبورد" },
+          { text: "امکان اتصال به میزهای منوی دیجیتال (وردپرس)", soon: true },
+          { text: "مدیریت موقعیت‌ها" },
+          { text: "نمایش گرافیکی وضعیت همه میزها در لحظه" },
+        ],
+      },
+      {
+        title: "مدیریت و پیگیری سفارشات",
+        items: [
+          { text: "مشاهده همه سفارشات با جزئیات کامل" },
+          { text: "فیلتر بر اساس وضعیت، تاریخ، گارسون و میز" },
+          { text: "پرداخت مستقیم سفارشات در انتظار" },
+          { text: "ویرایش و لغو سفارش با بازگشت خودکار موجودی", soon: true },
+        ],
+      },
+      {
+        title: "حسابداری و گزارشات حرفه‌ای",
+        items: [
+          { text: "آمار فروش امروز، ماه و بازه‌های دلخواه" },
+          { text: "نمودار فروش ۷ روز اخیر" },
+          { text: "نمودار فروش بر اساس دسته‌بندی" },
+          { text: "لیست کامل تراکنش‌ها با جمع کل" },
+          { text: "خروجی اکسل از گزارشات" },
+          { text: "آمار تفکیکی عملکرد دقیق هر گارسون (تعداد سفارش، فروش کل، میانگین)" },
+        ],
+      },
+      {
+        title: "مدیریت پرسنل",
+        items: [
+          { text: "افزودن، ویرایش و حذف گارسون‌ها" },
+          { text: "ثبت اطلاعات کامل هر گارسون (موبایل، ایمیل، شیفت، بخش و ...)" },
+          { text: "آپلود تصویر پروفایل برای هر گارسون" },
+          { text: "جستجو و فیلتر سریع در بین پرسنل" },
+          { text: "مشاهده آمار عملکرد هر گارسون" },
+        ],
+      },
+      {
+        title: "مدیریت تصاویر",
+        items: [
+          { text: "آپلود تصویر برای هر محصول" },
+          { text: "آپلود تصویر برای هر دسته‌بندی" },
+          { text: "جستجوی سریع برای ویرایش تصاویر" },
+          { text: "بارگذاری بهینه تصاویر" },
+        ],
+      },
+      {
+        title: "همگام‌سازی هوشمند",
+        items: [
+          { text: "همگام‌سازی خودکار محصولات با نرم‌افزار حسابداری" },
+          { text: "ارسال خودکار سفارشات به نرم‌افزار حسابداری" },
+          { text: "به‌روزرسانی لحظه‌ای موجودی انبار در نرم‌افزار حسابداری" },
+        ],
+      },
+      {
+        title: "تنظیمات اختصاصی",
+        items: [
+          { text: "آپلود لوگوی مجموعه" },
+          { text: "انتخاب منبع میزها جهت نمایش و ثبت سفارش" },
+          { text: "دریافت کامل محصولات از نرم‌افزار حسابداری با نمایش پیشرفت لحظه‌ای" },
+          { text: "ویرایش پروفایل کاربری" },
+        ],
+      },
+      {
+        title: "تجربه کاربری حرفه‌ای",
+        items: [
+          { text: "قابل نصب روی موبایل" },
+          { text: "طراحی کاملاً واکنش‌گرا برای موبایل، تبلت و کامپیوتر" },
+          { text: "حالت شب (Dark Mode) برای استفاده در محیط‌های کم‌نور" },
+          { text: "طراحی مدرن، ساده و کاربرپسند" },
+          { text: "هشدارها و پیام‌های راهنما در تمام مراحل" },
+          { text: "سطوح دسترسی متفاوت برای مدیر و گارسون" },
+        ],
+      },
+    ],
     accent: { primary: "#c80840", secondary: "#101840" },
     logo: {
       // logo-full.svg is crimson + navy (vanishes on dark); white/crimson mark for dark.
@@ -211,8 +348,8 @@ export const products: readonly Product[] = [
       { key: "panel", label: ACTION_LABELS.panel, enabled: false, reason: "future" },
       { key: "support", label: ACTION_LABELS.support, enabled: false, reason: "future" },
       { key: "pricing", label: ACTION_LABELS.pricing, enabled: false, reason: "future" },
-      { key: "details", label: ACTION_LABELS.details, enabled: false, reason: "future" },
-      { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future" },
+      { key: "details", label: ACTION_LABELS.details, enabled: true },
+      { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future", teaser: AI_TEASER },
     ],
   },
 ] as const;

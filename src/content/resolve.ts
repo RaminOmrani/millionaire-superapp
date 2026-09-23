@@ -14,6 +14,8 @@ export interface ResolvedAction {
   content?: string[];
   /** Pricing plans (pricing action only) */
   plans?: PricingPlan[];
+  /** Locked-card teaser line */
+  teaser?: string;
   /** True when the value comes from the admin panel rather than data.md */
   overridden: boolean;
 }
@@ -38,7 +40,7 @@ function baseAction(a: ProductAction): Omit<ResolvedAction, "overridden"> {
       content: a.content ? [...a.content] : undefined,
     };
   }
-  return { key: a.key, label: a.label, enabled: false };
+  return { key: a.key, label: a.label, enabled: false, teaser: a.teaser };
 }
 
 function mergeAction(base: ProductAction, ov: ActionOverride | undefined, plans: PricingPlan[] | undefined): ResolvedAction {

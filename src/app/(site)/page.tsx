@@ -8,6 +8,7 @@ import { ProductGrid } from "@/components/product/ProductGrid";
 import { holding } from "@/content/holding";
 import { getResolvedProducts } from "@/content/resolve";
 import { buildSearchIndex } from "@/content/search-index";
+import { currentJalaliYear } from "@/lib/format";
 import { toPersianDigits } from "@/lib/persian-digits";
 
 // Content can be edited from /admin, so render per request (SQLite read is sub-millisecond).
@@ -26,6 +27,26 @@ export default function LandingPage() {
   const products = getResolvedProducts();
   const activeCount = products.filter((p) => p.status === "active").length;
   const topBanners = getLiveBanners("top");
+  const yearsActive = currentJalaliYear() - Number(holding.foundedYear);
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: holding.nameFa,
+    alternateName: holding.nameEn,
+    url: `https://${holding.appDomain}`,
+    logo: `https://${holding.appDomain}/icons/icon-512.png`,
+    email: holding.email,
+    telephone: holding.phone,
+    foundingDate: "2006",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: holding.address,
+      addressLocality: holding.city,
+      postalCode: holding.postalCode,
+      addressCountry: "IR",
+    },
+    sameAs: [holding.website, holding.social.instagram, holding.social.aparat],
+  };
   const midBanners = getLiveBanners("middle");
   const launcherProducts: LauncherProduct[] = products.map((p) => ({
     slug: p.slug,
@@ -39,6 +60,7 @@ export default function LandingPage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
       {/* ---------- Launcher: search + icons first (super-app pattern) ---------- */}
       <section className="relative">
         <div
@@ -86,13 +108,27 @@ export default function LandingPage() {
             <div className="lg:col-span-7">
               <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-line bg-bg/40 px-3 py-1 text-xs font-semibold text-fg-muted">
                 <span className="size-1.5 rounded-full bg-brand-red" aria-hidden />
-                {holding.subtitle}، {toPersianDigits(activeCount)} محصول فعال
+                {holding.subtitle}، از سال {toPersianDigits(holding.foundedYear)}
               </p>
               <h1 className="display text-balance text-3xl leading-[1.15] sm:text-5xl lg:text-6xl">{holding.slogan}</h1>
               <p className="mt-5 max-w-xl text-base leading-8 text-fg-muted sm:text-lg">
                 همه‌ی محصولات {holding.nameFa}، یک‌جا. محصول خود را انتخاب کنید و به پنل، پشتیبانی و تعرفه‌های آن
                 دسترسی داشته باشید.
               </p>
+              <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-4">
+                <div>
+                  <dd className="display text-3xl sm:text-4xl">+{toPersianDigits(holding.customers)}</dd>
+                  <dt className="text-sm text-fg-muted">کسب‌وکار همکار در سراسر کشور</dt>
+                </div>
+                <div>
+                  <dd className="display text-3xl sm:text-4xl">+{toPersianDigits(yearsActive)}</dd>
+                  <dt className="text-sm text-fg-muted">سال تجربه</dt>
+                </div>
+                <div>
+                  <dd className="display text-3xl sm:text-4xl">{toPersianDigits(activeCount)}</dd>
+                  <dt className="text-sm text-fg-muted">محصول فعال</dt>
+                </div>
+              </dl>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Link
                   href="#products"

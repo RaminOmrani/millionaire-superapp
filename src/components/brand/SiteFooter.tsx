@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Clock, LifeBuoy, Mail, MapPin, Phone } from "lucide-react";
+import { SocialLinks } from "@/components/brand/SocialLinks";
 import { holding } from "@/content/holding";
 import { toPersianDigits } from "@/lib/persian-digits";
 
@@ -25,6 +26,7 @@ export function SiteFooter() {
             <Link href="/about" className="text-fg-muted hover:text-fg">درباره‌ی ما</Link>
             <Link href="/consult" className="text-fg-muted hover:text-fg">درخواست مشاوره</Link>
           </nav>
+          <SocialLinks className="mt-6" />
         </div>
 
         <dl className="grid gap-5 text-sm lg:col-span-7 lg:grid-cols-2">
@@ -60,8 +62,13 @@ export function SiteFooter() {
           <div className="flex items-start gap-3">
             <MapPin className="mt-0.5 size-4 shrink-0 text-fg-faint" aria-hidden />
             <div>
-              <dt className="text-fg-faint">شهر</dt>
-              <dd className="font-medium">{holding.city}</dd>
+              <dt className="text-fg-faint">آدرس</dt>
+              <dd className="leading-6">
+                {holding.address}
+                <a href={holding.mapUrl} target="_blank" rel="noopener noreferrer" className="mr-2 font-semibold underline-offset-4 hover:underline">
+                  نقشه
+                </a>
+              </dd>
             </div>
           </div>
           <div className="flex items-start gap-3 lg:col-span-2">

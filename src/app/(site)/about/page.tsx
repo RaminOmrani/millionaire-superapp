@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Building2, Clock, Lock, Mail, MapPin, Phone, User } from "lucide-react";
+import { Building2, Clock, ExternalLink, Mail, MapPin, Phone, User } from "lucide-react";
+import { SocialLinks } from "@/components/brand/SocialLinks";
 import { holding } from "@/content/holding";
 import { getResolvedProducts } from "@/content/resolve";
 import { toPersianDigits } from "@/lib/persian-digits";
@@ -10,11 +11,16 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "درباره‌ی هلدینگ",
-  description: `${holding.nameFa} — ${holding.subtitle}، ${holding.city}`,
+  description: `${holding.nameFa} — فعال در حوزه‌ی ${holding.field} از سال ${toPersianDigits(holding.foundedYear)}، همکار بیش از ${toPersianDigits(holding.customers)} کسب‌وکار در سراسر کشور.`,
 };
 
 export default function AboutPage() {
   const products = getResolvedProducts();
+  const facts = [
+    { value: toPersianDigits(holding.foundedYear), label: "سال تأسیس" },
+    { value: `+${toPersianDigits(holding.customers)}`, label: "کسب‌وکار همکار در سراسر کشور" },
+    { value: toPersianDigits(products.length), label: "محصول زیر یک سقف" },
+  ];
 
   return (
     <>
@@ -33,21 +39,25 @@ export default function AboutPage() {
               <p className="mb-4 text-sm font-semibold text-fg-muted">{holding.subtitle}</p>
               <h1 className="display text-balance text-4xl sm:text-5xl lg:text-6xl">{holding.nameFa}</h1>
               <p className="display mt-4 text-xl text-fg-muted sm:text-2xl">{holding.slogan}</p>
-              <p className="mt-6 inline-flex items-center gap-1.5 text-xs text-fg-faint">
-                <Lock className="size-3" aria-hidden />
-                متن معرفی کامل به‌زودی
+              <p className="mt-6 max-w-2xl text-base leading-8 text-fg-muted sm:text-lg">
+                {holding.nameFa} از سال {toPersianDigits(holding.foundedYear)} در حوزه‌ی {holding.field} فعالیت می‌کند و امروز با
+                بیش از {toPersianDigits(holding.customers)} کسب‌وکار در سراسر کشور همکاری دارد. دفتر مرکزی ما در{" "}
+                {holding.city} است.
               </p>
             </div>
             <div className="lg:col-span-5">
-              <Image
-                src={holding.logo.vertical}
-                alt={holding.subtitle}
-                width={967}
-                height={1080}
-                className="mx-auto h-48 w-auto sm:h-64"
-              />
+              <Image src={holding.logo.vertical} alt={holding.subtitle} width={967} height={1080} className="mx-auto h-48 w-auto sm:h-64" />
             </div>
           </div>
+
+          <dl className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {facts.map((f) => (
+              <div key={f.label} className="grain rounded-tile border border-line bg-surface p-6">
+                <dd className="display text-4xl sm:text-5xl">{f.value}</dd>
+                <dt className="mt-2 text-sm text-fg-muted">{f.label}</dt>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
@@ -57,7 +67,6 @@ export default function AboutPage() {
             <h2 className="display text-2xl">تماس</h2>
             <dl className="mt-5 space-y-4 text-sm">
               <Row icon={User} label="مدیرعامل">{holding.ceo}</Row>
-              <Row icon={Building2} label="شهر">{holding.city}</Row>
               <Row icon={Phone} label="تلفن">
                 <a href={`tel:${holding.phone.replace(/-/g, "")}`} className="ltr-nums font-semibold">
                   {toPersianDigits(holding.phone)}
@@ -70,12 +79,26 @@ export default function AboutPage() {
               </Row>
               <Row icon={Clock} label="ساعت کاری">{holding.workingHours}</Row>
               <Row icon={MapPin} label="آدرس">
-                <span className="inline-flex items-center gap-1.5 text-fg-faint">
-                  <Lock className="size-3" aria-hidden />
-                  به‌زودی
-                </span>
+                <p className="leading-7">{holding.address}</p>
+                <p className="mt-1 text-fg-muted">
+                  کد پستی: <span className="ltr-nums">{toPersianDigits(holding.postalCode)}</span>
+                </p>
+                <a
+                  href={holding.mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-fg px-4 py-2 text-xs font-bold text-bg hover:opacity-90"
+                >
+                  <Building2 className="size-3.5" aria-hidden />
+                  مسیریابی با نشان
+                  <ExternalLink className="size-3" aria-hidden />
+                </a>
               </Row>
             </dl>
+            <div className="mt-6 border-t border-line pt-5">
+              <p className="mb-3 text-sm text-fg-faint">ما را دنبال کنید</p>
+              <SocialLinks withLabels />
+            </div>
           </div>
 
           <div className="grain rounded-tile border border-line bg-surface p-6 lg:col-span-7">

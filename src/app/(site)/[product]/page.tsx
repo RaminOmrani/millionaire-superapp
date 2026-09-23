@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Check, ExternalLink, Lock, MessageSquareText, Star } from "lucide-react";
+import { ArrowRight, Check, Clock, ExternalLink, Lock, MessageSquareText, Sparkles, Star } from "lucide-react";
 import { ActionCard } from "@/components/product/ActionCard";
 import { getProduct, type ActionKey } from "@/content/products";
-import { getResolvedProduct, type ResolvedAction } from "@/content/resolve";
+import { getResolvedProduct, type ResolvedAction, type ResolvedProduct } from "@/content/resolve";
 import { toPersianDigits } from "@/lib/persian-digits";
 import { cn } from "@/lib/utils";
 
@@ -44,10 +44,17 @@ export default async function ProductHubPage({ params }: { params: Params }) {
   const hasPlans = !!pricing?.enabled && !!pricing.plans?.length;
   // With real plans the pricing card becomes a full-width row at the end; details widens to match.
   const PLAN_ORDER: ActionKey[] = ["panel", "support", "ai", "details", "pricing"];
+  const richDetails = !!product.featureGroups?.length && product.features.length === 0;
+  // Rich details (full-width) go last so the four short cards share one row.
+  const RICH_ORDER: ActionKey[] = ["panel", "support", "pricing", "ai", "details"];
   const ordered = hasPlans
     ? [...product.actions].sort((a, b) => PLAN_ORDER.indexOf(a.key) - PLAN_ORDER.indexOf(b.key))
-    : product.actions;
+    : richDetails
+      ? [...product.actions].sort((a, b) => RICH_ORDER.indexOf(a.key) - RICH_ORDER.indexOf(b.key))
+      : product.actions;
   const layoutFor = (key: ActionKey) => {
+    if (key === "details" && richDetails) return "sm:col-span-2 lg:col-span-12";
+    if (richDetails && !hasPlans) return "lg:col-span-3";
     if (!hasPlans) return ACTION_LAYOUT[key];
     if (key === "pricing" || key === "details") return "sm:col-span-2 lg:col-span-12";
     return "lg:col-span-4";
@@ -80,7 +87,7 @@ export default async function ProductHubPage({ params }: { params: Params }) {
             <div className="lg:col-span-7">
               {locked && (
                 <span className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-line bg-surface/60 px-3 py-1 text-xs font-semibold text-fg-muted">
-                  <Lock className="size-3" aria-hidden />
+                  <Clock className="size-3" aria-hidden />
                   به‌زودی
                 </span>
               )}
@@ -166,13 +173,14 @@ export default async function ProductHubPage({ params }: { params: Params }) {
       <section className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-end justify-between gap-6">
           <h2 className="display text-2xl sm:text-3xl">دسترسی‌ها</h2>
-          {locked && <p className="text-sm text-fg-muted">این محصول هنوز عمومی نشده است.</p>}
+          {locked && <p className="text-sm text-fg-muted">این محصول به‌زودی عرضه می‌شود؛ تا آن زمان معرفی و امکاناتش را ببینید.</p>}
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12">
           {ordered.map((action, i) => (
             <ActionCard key={action.key} action={action} index={i} className={layoutFor(action.key)}>
-              {action.enabled && action.key === "details" && <DetailsBody description={product.description} action={action} />}
+              {action.enabled && action.key === "details" &&
+                (richDetails ? <RichDetails product={product} /> : <DetailsBody description={product.description} action={action} />)}
               {action.enabled && action.key === "pricing" && <PricingBody action={action} />}
               {action.enabled && action.key !== "details" && action.key !== "pricing" && action.content && (
                 <ul className="mt-4 space-y-1.5 text-sm text-fg-muted">
@@ -185,6 +193,64 @@ export default async function ProductHubPage({ params }: { params: Params }) {
           ))}
         </div>
       </section>
+    </div>
+  );
+}
+
+/** Grouped features + highlights + motto (products with featureGroups, e.g. Garson-yar). */
+function RichDetails({ product }: { product: ResolvedProduct }) {
+  return (
+    <div className="mt-4 space-y-8">
+      {product.description && <p className="max-w-3xl text-base leading-8 text-fg-muted">{product.description}</p>}
+
+      {product.highlights && product.highlights.length > 0 && (
+        <div>
+          <h4 className="mb-3 text-sm font-bold">چرا {product.nameFa}؟</h4>
+          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {product.highlights.map((h) => {
+              const [head, ...rest] = h.split(" — ");
+              return (
+                <li key={h} className="rounded-2xl border border-line bg-bg/40 p-4">
+                  <p className="flex items-center gap-2 font-bold">
+                    <Sparkles className="size-4 shrink-0 text-[var(--accent)]" aria-hidden />
+                    {head}
+                  </p>
+                  {rest.length > 0 && <p className="mt-1 text-sm text-fg-muted">{rest.join(" — ")}</p>}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
+      <div>
+        <h4 className="mb-3 text-sm font-bold">امکانات و قابلیت‌ها</h4>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {product.featureGroups!.map((g) => (
+            <section key={g.title} className="rounded-2xl border border-line bg-bg/40 p-4">
+              <h5 className="font-bold">{g.title}</h5>
+              <ul className="mt-3 space-y-2 text-sm">
+                {g.items.map((it) => (
+                  <li key={it.text} className="flex items-start gap-2">
+                    <Check className="mt-1 size-3.5 shrink-0 text-[var(--accent)]" aria-hidden />
+                    <span className="text-fg-muted">
+                      {it.text}
+                      {it.soon && (
+                        <span className="mr-1.5 inline-flex items-center gap-1 rounded-full border border-line px-1.5 text-[10px] font-semibold text-fg-faint">
+                          <Clock className="size-2.5" aria-hidden />
+                          به‌زودی
+                        </span>
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </div>
+
+      {product.motto && <p className="display text-xl sm:text-2xl">{product.motto}</p>}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Clock, Mail, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { ConsultForm } from "@/components/product/ConsultForm";
 import { holding } from "@/content/holding";
 import { CONSULT_PRODUCTS } from "@/db/schema";
@@ -51,6 +51,18 @@ export default async function ConsultPage({ searchParams }: { searchParams: Prom
               <div>
                 <dt className="text-fg-faint">ساعت کاری</dt>
                 <dd className="font-medium">{holding.workingHours}</dd>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <MapPin className="mt-0.5 size-4 text-fg-faint" aria-hidden />
+              <div>
+                <dt className="text-fg-faint">آدرس</dt>
+                <dd className="font-medium leading-7">
+                  {holding.address}
+                  <a href={holding.mapUrl} target="_blank" rel="noopener noreferrer" className="mr-2 font-bold underline-offset-4 hover:underline">
+                    مسیریابی با نشان
+                  </a>
+                </dd>
               </div>
             </div>
           </dl>

@@ -1,6 +1,6 @@
 /**
  * Holding-level content, transcribed from data.md §1 and §6.
- * Fields marked ❓ in data.md are intentionally absent (locked).
+ * Fields marked ❓ in data.md are intentionally absent (locked): Telegram.
  */
 export const holding = {
   nameFa: "هلدینگ میلیونر",
@@ -8,6 +8,17 @@ export const holding = {
   subtitle: "گروه نرم‌افزاری میلیونر",
   slogan: "میلیونر؛ هوشمندتر از همیشه",
   ceo: "خانم فائزه قریبی",
+  foundedYear: "1385",
+  /** Ramin: «همکاری با +5000 کسب‌وکار در سراسر کشور» */
+  customers: "5000",
+  field: "نرم‌افزار حسابداری",
+  address: "مشهد، احمدآباد، راهنمایی ۸، پلاک ۵، ساختمان ممتاز، طبقه ۴، واحد ۱",
+  postalCode: "9185643664",
+  mapUrl: "https://nshn.ir/26Qb1JbP_JGAYV",
+  social: {
+    instagram: "https://www.instagram.com/softmilliac",
+    aparat: "https://www.aparat.com/softmiliac",
+  },
   city: "مشهد",
   phone: "051-38473801-4",
   email: "info@softmiliac.com",

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpLeft, Lock } from "lucide-react";
+import { ArrowUpLeft, Clock } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import type { CSSProperties } from "react";
 import type { Product } from "@/content/products";
@@ -77,7 +77,7 @@ export function ProductTile({ product, index, className, emphasis = false }: Pro
           >
             {locked ? (
               <>
-                <Lock className="size-3" aria-hidden />
+                <Clock className="size-3" aria-hidden />
                 {COMING_SOON}
               </>
             ) : (
@@ -88,7 +88,7 @@ export function ProductTile({ product, index, className, emphasis = false }: Pro
             )}
           </span>
 
-          {!locked && (
+          {(
             <motion.span
               aria-hidden
               className="inline-flex size-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white light:border-line light:bg-bg/60 light:text-fg"
@@ -154,9 +154,8 @@ export function ProductTile({ product, index, className, emphasis = false }: Pro
     "border-[color-mix(in_oklab,var(--accent)_35%,transparent)]",
     "shadow-[0_30px_80px_-40px_color-mix(in_oklab,var(--accent)_70%,transparent)]",
     "transition-[border-color,box-shadow] duration-500",
-    locked
-      ? "cursor-not-allowed opacity-60 saturate-50"
-      : "hover:border-[color-mix(in_oklab,var(--accent)_70%,transparent)] hover:shadow-[0_40px_100px_-30px_color-mix(in_oklab,var(--accent)_85%,transparent)]",
+    locked && "opacity-75 saturate-[0.6]",
+    "hover:border-[color-mix(in_oklab,var(--accent)_70%,transparent)] hover:shadow-[0_40px_100px_-30px_color-mix(in_oklab,var(--accent)_85%,transparent)] hover:opacity-100 hover:saturate-100",
     className,
   );
 
@@ -168,24 +167,6 @@ export function ProductTile({ product, index, className, emphasis = false }: Pro
         viewport: { once: true, margin: "-10% 0px" },
         transition: { duration: 0.7, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] as const },
       };
-
-  if (locked) {
-    return (
-      <motion.div
-        {...entrance}
-        className={shell}
-        style={style}
-        role="link"
-        aria-disabled="true"
-        tabIndex={0}
-        title={COMING_SOON}
-        initial="rest"
-        animate="rest"
-      >
-        {inner}
-      </motion.div>
-    );
-  }
 
   return (
     <motion.div
@@ -200,7 +181,7 @@ export function ProductTile({ product, index, className, emphasis = false }: Pro
       <Link
         href={`/${product.slug}`}
         className="absolute inset-0 z-20 rounded-tile"
-        aria-label={`${product.nameFa} — ${product.tagline}`}
+        aria-label={`${product.nameFa} — ${product.tagline}${locked ? " (به‌زودی)" : ""}`}
       />
       {inner}
     </motion.div>

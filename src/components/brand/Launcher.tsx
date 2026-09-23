@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowUpLeft, Info, LifeBuoy, Lock, MessageSquareText, Search, X } from "lucide-react";
+import { ArrowUpLeft, Clock, Info, LifeBuoy, MessageSquareText, Search, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useId, useMemo, useRef, useState, type CSSProperties } from "react";
 import { searchItems, type SearchItem } from "@/lib/search";
@@ -224,7 +224,7 @@ export function Launcher({ products, index, supportUrl, topSlot }: Props) {
                   className={cn(
                     "grain relative flex aspect-square w-full max-w-[84px] items-center justify-center overflow-hidden rounded-[26%] border bg-surface p-[20%] transition duration-300 group-hover:-translate-y-0.5 group-active:scale-95",
                     "border-[color-mix(in_oklab,var(--accent)_35%,transparent)] shadow-[0_16px_40px_-24px_color-mix(in_oklab,var(--accent)_90%,transparent)]",
-                    p.locked && "opacity-55 saturate-50",
+                    p.locked && "opacity-75 saturate-[0.6]",
                   )}
                   style={{ "--accent": p.accent } as CSSProperties}
                 >
@@ -242,7 +242,7 @@ export function Launcher({ products, index, supportUrl, topSlot }: Props) {
                   )}
                   {p.locked && (
                     <span className="absolute bottom-1 left-1 inline-flex size-5 items-center justify-center rounded-full bg-bg/80 text-fg-muted">
-                      <Lock className="size-3" aria-hidden />
+                      <Clock className="size-3" aria-hidden />
                     </span>
                   )}
                 </span>

@@ -103,13 +103,13 @@ export function HeroVisual({ className }: { className?: string }) {
               transition={{ duration: 6 + i, repeat: Infinity, ease: "easeInOut", delay: m.delay }}
             >
               <Link
-                href={m.locked ? "#products" : `/${m.slug}`}
+                href={`/${m.slug}`}
                 tabIndex={-1}
                 title={m.name}
                 className={cn(
                   "grain group flex h-full w-full items-center justify-center overflow-hidden rounded-[22%] border bg-surface p-[16%] transition-transform duration-500 hover:-translate-y-1",
                   "border-[color-mix(in_oklab,var(--accent)_35%,transparent)] shadow-[0_30px_70px_-35px_color-mix(in_oklab,var(--accent)_80%,transparent)]",
-                  m.locked && "opacity-55 saturate-50",
+                  m.locked && "opacity-75 saturate-[0.6]",
                 )}
                 style={{ "--accent": m.accent, "--accent-2": m.accent2 } as CSSProperties}
               >

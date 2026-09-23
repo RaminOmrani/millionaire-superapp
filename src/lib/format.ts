@@ -21,3 +21,9 @@ export function formatMobileFa(phone: string): string {
   const m = phone.match(/^(\d{4})(\d{3})(\d{4})$/);
   return toPersianDigits(m ? `${m[1]} ${m[2]} ${m[3]}` : phone);
 }
+
+/** Current Solar Hijri year as a number (e.g. 1405). */
+export function currentJalaliYear(): number {
+  const y = new Intl.DateTimeFormat("fa-IR-u-nu-latn-ca-persian", { year: "numeric", timeZone: "Asia/Tehran" }).format(new Date());
+  return Number(y.replace(/\D/g, ""));
+}
