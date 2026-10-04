@@ -154,8 +154,8 @@ export default function LandingPage() {
       {/* ---------- Products ---------- */}
       <section id="products" className="mt-14 scroll-mt-24 sm:mt-20 app:mt-10">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <header className="mb-8 max-w-2xl sm:mb-10 app:mb-5">
-            <p className="text-sm font-bold text-brand-red-light light:text-brand-red">محصولات هلدینگ</p>
+          <header className="mb-6 max-w-2xl sm:mb-8 app:mb-4">
+            <p className="text-sm font-bold text-brand-red-light light:text-brand-red">محصولات و خدمات</p>
             <h2 className="display mt-2 text-2xl sm:text-3xl">یک برند برای هر نیاز</h2>
             <p className="mt-3 text-base leading-8 text-fg-muted app:hidden">
               هر محصول، یک برند مستقل زیر یک سقف است. برای ورود به پنل، پشتیبانی و تعرفه‌ها روی کارت هر محصول بزنید.
