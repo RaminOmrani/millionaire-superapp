@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowUpLeft, Clock, Search, X } from "lucide-react";
+import { ArrowUpLeft, Clock, History, Search, X } from "lucide-react";
 import { ServiceIcon, type ServiceIconName } from "@/components/brand/ServiceIcon";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useId, useMemo, useRef, useState, type CSSProperties } from "react";
+import { clearRecent, useRecent } from "@/lib/local-store";
 import { searchItems, type SearchItem } from "@/lib/search";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +19,8 @@ export interface LauncherProduct {
   accent: string;
   mark: string;
   markLight?: string;
+  /** Admin-set label, e.g. «جدید» */
+  badge?: string;
 }
 
 interface Props {
@@ -40,6 +43,8 @@ export function Launcher({ products, index, supportUrl, topSlot }: Props) {
   const listId = useId();
 
   const results = useMemo(() => searchItems(index, query), [index, query]);
+  const recentSlugs = useRecent();
+  const recent = recentSlugs.map((slug) => products.find((p) => p.slug === slug)).filter((p): p is LauncherProduct => !!p);
 
   useEffect(() => {
     function onDown(e: MouseEvent) {
@@ -204,6 +209,31 @@ export function Launcher({ products, index, supportUrl, topSlot }: Props) {
         )}
       </div>
 
+      {recent.length > 0 && (
+        <div className="-mt-3 flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="اخیراً بازدیدشده">
+          <span className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-fg-faint">
+            <History className="size-3.5" aria-hidden />
+            اخیراً
+          </span>
+          {recent.map((p) => (
+            <Link
+              key={p.slug}
+              href={`/${p.slug}`}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface py-1 pe-3 ps-1 text-xs font-bold transition hover:border-fg/30"
+            >
+              <span className="flex size-6 items-center justify-center rounded-full bg-bg/60 p-1">
+                <Image src={p.mark} alt="" width={24} height={24} className={cn("h-full w-full object-contain", p.markLight && "light:hidden")} />
+                {p.markLight && <Image src={p.markLight} alt="" width={24} height={24} className="hidden h-full w-full object-contain light:block" />}
+              </span>
+              {p.shortName}
+            </Link>
+          ))}
+          <button type="button" onClick={clearRecent} className="shrink-0 rounded-full px-2 py-1 text-[11px] text-fg-faint hover:text-fg" aria-label="پاک کردن اخیراً بازدیدشده">
+            پاک کردن
+          </button>
+        </div>
+      )}
+
       {topSlot}
 
       {/* ---------- icon grid ---------- */}
@@ -218,9 +248,14 @@ export function Launcher({ products, index, supportUrl, topSlot }: Props) {
             >
               <Link
                 href={`/${p.slug}`}
-                className="group flex flex-col items-center gap-2 rounded-2xl text-center"
-                aria-label={p.locked ? `${p.nameFa} (به‌زودی)` : p.nameFa}
+                className="group relative flex flex-col items-center gap-2 rounded-2xl text-center"
+                aria-label={`${p.nameFa}${p.badge ? ` — ${p.badge}` : ""}${p.locked ? " (به‌زودی)" : ""}`}
               >
+                {p.badge && (
+                  <span className="absolute -top-2 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-b from-[#e0393e] to-brand-red px-2 py-0.5 text-[10px] font-extrabold text-white shadow-[0_6px_14px_-6px_var(--color-brand-red)] ring-2 ring-bg">
+                    {p.badge}
+                  </span>
+                )}
                 <span
                   className={cn(
                     "grain relative flex aspect-square w-full max-w-[76px] items-center justify-center overflow-hidden rounded-[26%] border bg-surface p-[20%] transition duration-300 group-hover:-translate-y-0.5 group-active:scale-95",

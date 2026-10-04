@@ -10,7 +10,7 @@ import type { Product } from "@/content/products";
 import { cn } from "@/lib/utils";
 
 /** Only the fields the tile renders — works for base and resolved products. */
-export type TileProduct = Pick<Product, "slug" | "nameFa" | "tagline" | "status" | "accent" | "logo">;
+export type TileProduct = Pick<Product, "slug" | "nameFa" | "tagline" | "status" | "accent" | "logo"> & { badge?: string };
 
 export interface TileService {
   key: ServiceIconName;
@@ -102,7 +102,14 @@ export function ProductTile({ product, index }: { product: TileProduct; index: n
               به‌زودی
             </span>
           ) : (
-            <Arrow />
+            <span className="flex items-center gap-1.5">
+              {product.badge && (
+                <span className="rounded-full bg-gradient-to-b from-[#e0393e] to-brand-red px-2 py-0.5 text-[10px] font-extrabold text-white">
+                  {product.badge}
+                </span>
+              )}
+              <Arrow />
+            </span>
           )}
         </div>
         <div className="mt-auto pt-4">

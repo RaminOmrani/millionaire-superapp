@@ -67,6 +67,8 @@ export const productContent = sqliteTable("product_content", {
   features: text("features", { mode: "json" }).$type<string[]>(),
   actions: text("actions", { mode: "json" }).$type<Record<string, ActionOverride>>(),
   plans: text("plans", { mode: "json" }).$type<PricingPlan[]>(),
+  /** Short label shown on the product's launcher icon (e.g. «جدید») — admin-managed, none by default */
+  badge: text("badge"),
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),

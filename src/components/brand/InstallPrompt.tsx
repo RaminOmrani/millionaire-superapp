@@ -32,13 +32,17 @@ export function InstallPrompt() {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
-    if (document.documentElement.dataset.app === "1" || snoozed()) return;
+    const quiet = document.documentElement.dataset.app === "1" || snoozed();
+    // Always keep the deferred prompt so the side menu can offer «نصب اپ» even when this card is snoozed.
     const onPrompt = (e: Event) => {
       e.preventDefault();
+      (window as unknown as { __installPrompt?: Event }).__installPrompt = e;
+      if (quiet) return;
       setDeferred(e as BeforeInstallPromptEvent);
       setMode("native");
     };
     window.addEventListener("beforeinstallprompt", onPrompt);
+    if (quiet) return () => window.removeEventListener("beforeinstallprompt", onPrompt);
 
     const ua = navigator.userAgent;
     const isIos = /iPhone|iPad|iPod/.test(ua) && !/CriOS|FxiOS/.test(ua);

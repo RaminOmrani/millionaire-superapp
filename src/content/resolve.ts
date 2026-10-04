@@ -26,6 +26,8 @@ export interface ResolvedProduct extends Omit<Product, "actions" | "description"
   version?: string;
   features: string[];
   actions: ResolvedAction[];
+  /** Admin-set label for the launcher icon */
+  badge?: string;
   overridden: boolean;
 }
 
@@ -83,6 +85,7 @@ export function resolveProduct(base: Product, row: ProductContentRow | undefined
     version: row?.version ?? base.version,
     features,
     actions,
+    badge: row?.badge ?? undefined,
     overridden: !!row,
   };
 }

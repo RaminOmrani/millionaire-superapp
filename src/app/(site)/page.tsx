@@ -56,6 +56,7 @@ export default function LandingPage() {
     accent: p.accent.primary,
     mark: p.logo.mark,
     markLight: p.logo.markLight,
+    badge: p.badge,
   }));
 
   return (
@@ -152,7 +153,8 @@ export default function LandingPage() {
       </section>
 
       {/* ---------- Products ---------- */}
-      <section id="products" className="mt-14 scroll-mt-24 sm:mt-20 app:mt-10">
+      {/* App: the launcher icons above already list these entries, so this grid is website-only. */}
+      <section id="products" className="mt-14 scroll-mt-24 sm:mt-20 app:hidden">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <header className="mb-6 max-w-2xl sm:mb-8 app:mb-4">
             <p className="text-sm font-bold text-brand-red-light light:text-brand-red">محصولات و خدمات</p>

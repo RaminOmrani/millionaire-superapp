@@ -3,6 +3,7 @@ import { MessageSquareText } from "lucide-react";
 import { holding } from "@/content/holding";
 import { HeaderShell } from "@/components/brand/HeaderShell";
 import { HoldingLogo } from "@/components/brand/HoldingLogo";
+import { SideMenu } from "@/components/brand/SideMenu";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function SiteHeader() {
@@ -33,7 +34,9 @@ export function SiteHeader() {
             <MessageSquareText className="size-4" aria-hidden />
             درخواست مشاوره
           </Link>
-          <ThemeToggle />
+          {/* theme lives in the side menu on phones and in the app */}
+          <ThemeToggle className="hidden sm:inline-flex app:hidden" />
+          <SideMenu className="sm:hidden app:inline-flex" />
         </nav>
       </div>
     </HeaderShell>

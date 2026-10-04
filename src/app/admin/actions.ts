@@ -135,6 +135,7 @@ export async function saveProductContent(slug: ProductSlug, _prev: ContentState,
     const description = String(formData.get("description") ?? "").trim() || null;
     const website = optionalUrl.parse(formData.get("website") ?? "") || null;
     const version = String(formData.get("version") ?? "").trim() || null;
+    const badge = String(formData.get("badge") ?? "").trim().slice(0, 16) || null;
     const features = lines(formData.get("features"));
 
     const actions: Record<string, { enabled?: boolean; href?: string | null; note?: string | null; content?: string[] }> = {};
@@ -166,6 +167,7 @@ export async function saveProductContent(slug: ProductSlug, _prev: ContentState,
         features: features.length ? features : null,
         actions: Object.keys(actions).length ? actions : null,
         plans: plans.length ? plans : null,
+        badge,
         updatedAt: new Date(),
       })
       .onConflictDoUpdate({
@@ -178,6 +180,7 @@ export async function saveProductContent(slug: ProductSlug, _prev: ContentState,
           features: features.length ? features : null,
           actions: Object.keys(actions).length ? actions : null,
           plans: plans.length ? plans : null,
+          badge,
           updatedAt: new Date(),
         },
       })

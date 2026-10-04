@@ -60,6 +60,11 @@ docs/reference/                site screenshots (design inspiration only)
   audience both/web/app; optional date window; uploaded images live in `<data dir>/uploads/banners`
   and are served by `/media/banners/[file]` (raster only, magic-byte checked, 1.5 MB). Top slot is slim, middle is large.
   An empty slot shows a house banner built only from supplied content (`houseBanner` in `content/banners.ts`).
+- Side menu (`SideMenu`, hamburger on phones and in the app): nav, «تازه‌ها» from `/api/news` (titled live banners),
+  red dot when news is newer than the last opening (localStorage), theme, install, contact, socials.
+- Per-device state uses `lib/local-store.ts` (useSyncExternalStore over localStorage): recently viewed products
+  («اخیراً» row under the search), news-seen marker. Never store anything shared or important there.
+- Launcher icon badges come only from the admin (`product_content.badge`); no default badges.
 - `public/sw.js`: network-first for pages (never serves stale content), cache-first for fonts/brand/_next/static,
   `/offline` fallback. Bump `VERSION` when changing precached files.
 - Support action for every product is a plain link to `https://support.softmiliac.com` (no query param —

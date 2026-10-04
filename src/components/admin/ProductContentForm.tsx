@@ -43,6 +43,10 @@ export function ProductContentForm({ base, row }: { base: Product; row: ProductC
             </select>
           </label>
           <label className="text-sm">
+            برچسب روی آیکون (حداکثر ۱۶ حرف، مثلاً «جدید»)
+            <input name="badge" defaultValue={row?.badge ?? ""} maxLength={16} placeholder="خالی = بدون برچسب" className={inputClass} />
+          </label>
+          <label className="text-sm">
             نسخه فعلی
             <input name="version" defaultValue={row?.version ?? ""} placeholder={base.version ?? "—"} className={inputClass} />
           </label>

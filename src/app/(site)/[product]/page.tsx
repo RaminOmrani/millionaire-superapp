@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Clock, ExternalLink, LifeBuoy, Lock, MessageSquareText, Phone, Sparkles, Star } from "lucide-react";
 import { ActionCard } from "@/components/product/ActionCard";
 import { Expandable } from "@/components/product/Expandable";
+import { RecordVisit } from "@/components/product/RecordVisit";
 import { holding } from "@/content/holding";
 import { getProduct, type ActionKey } from "@/content/products";
 import { getResolvedProduct, type ResolvedAction, type ResolvedProduct } from "@/content/resolve";
@@ -58,6 +59,7 @@ export default async function ProductHubPage({ params }: { params: Params }) {
         } as React.CSSProperties
       }
     >
+      <RecordVisit slug={product.slug} />
       {/* ---------- Brand header: back link → logo → name/tagline → shared meta → consult CTA ---------- */}
       <section className="grain relative overflow-hidden">
         <div
