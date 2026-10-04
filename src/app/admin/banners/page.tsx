@@ -42,7 +42,7 @@ export default async function BannersPage() {
     >
       {rows.length === 0 ? (
         <div className="rounded-tile border border-dashed border-line bg-bg-elevated p-10 text-center text-sm text-fg-muted">
-          هنوز بنری ساخته نشده. تا وقتی بنری فعال نباشد، جایگاه بنر در سایت نمایش داده نمی‌شود.
+          هنوز بنری ساخته نشده. تا وقتی در یک جایگاه بنر فعالی نباشد، سایت یک بنر پیش‌فرض نشان می‌دهد (بالا: معرفی گارسون‌یار، پایین: همکاری با +۵۰۰۰ کسب‌وکار). با ساختن اولین بنر هر جایگاه، بنر پیش‌فرض همان جایگاه کنار می‌رود.
         </div>
       ) : (
         <ul className="grid gap-4 md:grid-cols-2">

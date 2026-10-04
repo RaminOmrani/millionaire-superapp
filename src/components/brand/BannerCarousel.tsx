@@ -109,7 +109,7 @@ function Track({ banners, size, className }: { banners: BannerView[]; size: "top
 
 function BannerCard({ banner: b, size, priority }: { banner: BannerView; size: "top" | "middle"; priority: boolean }) {
   const imageOnly = !!b.image && !b.title && !b.subtitle;
-  const ratio = size === "top" ? "aspect-[2.6/1] md:aspect-[4.2/1]" : "aspect-[2/1] md:aspect-[3.4/1]";
+  const ratio = size === "top" ? "aspect-[3.3/1] md:aspect-[5.2/1]" : "aspect-[2.05/1] md:aspect-[3.2/1]";
 
   const body = (
     <div
@@ -143,10 +143,13 @@ function BannerCard({ banner: b, size, priority }: { banner: BannerView; size: "
             }}
           />
           {b.mark && (
-            <span aria-hidden className="pointer-events-none absolute -bottom-[18%] left-[4%] h-[125%] opacity-90">
-              <Image src={b.mark} alt="" width={300} height={300} className={cn("h-full w-auto rotate-[-8deg] object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]", b.markLight && "light:hidden")} />
-              {b.markLight && <Image src={b.markLight} alt="" width={300} height={300} className="hidden h-full w-auto rotate-[-8deg] object-contain light:block" />}
-            </span>
+            <>
+              {/* mark confined to the left third so it never sits under the text */}
+              <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 flex w-[38%] items-center justify-center p-[3%]">
+                <Image src={b.mark} alt="" width={300} height={300} className={cn("max-h-[88%] w-auto max-w-full rotate-[-6deg] object-contain drop-shadow-[0_16px_32px_rgba(0,0,0,0.5)]", b.markLight && "light:hidden")} />
+                {b.markLight && <Image src={b.markLight} alt="" width={300} height={300} className="hidden max-h-[88%] w-auto max-w-full rotate-[-6deg] object-contain light:block" />}
+              </span>
+            </>
           )}
         </>
       )}
@@ -157,13 +160,14 @@ function BannerCard({ banner: b, size, priority }: { banner: BannerView; size: "
 
       {!imageOnly && (b.title || b.subtitle) && (
         <>
-          <div className={cn("flex max-w-[64%] flex-col justify-center gap-1.5 p-4 sm:gap-2 sm:p-7", b.image && "text-white")}>
-            {b.title && <p className="display text-balance text-lg leading-snug sm:text-2xl lg:text-3xl">{b.title}</p>}
-            {b.subtitle && <p className={cn("line-clamp-2 text-xs sm:text-base", b.image ? "text-white/80" : "text-fg-muted")}>{b.subtitle}</p>}
+          <div className={cn("flex max-w-[62%] flex-col justify-center gap-1 sm:gap-2", size === "top" ? "p-3.5 sm:p-6" : "p-5 sm:p-8", b.image && "text-white")}>
+            {b.title && <p className={cn("display text-balance leading-snug", size === "top" ? "text-base sm:text-xl lg:text-2xl" : "text-lg sm:text-2xl lg:text-3xl")}>{b.title}</p>}
+            {b.subtitle && <p className={cn("text-xs sm:text-base", size === "top" ? "line-clamp-1" : "line-clamp-2", b.image ? "text-white/80" : "text-fg-muted")}>{b.subtitle}</p>}
             {b.href && b.ctaLabel && (
               <span
                 className={cn(
-                  "mt-1 inline-flex w-fit items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold sm:mt-2 sm:px-5 sm:py-2 sm:text-sm",
+                  "mt-1 inline-flex w-fit items-center gap-1.5 rounded-full font-bold sm:mt-2",
+                  size === "top" ? "px-3 py-1 text-[11px] sm:px-4 sm:py-1.5 sm:text-sm" : "px-4 py-1.5 text-xs sm:px-5 sm:py-2 sm:text-sm",
                   b.image ? "bg-white text-black" : "bg-fg text-bg",
                 )}
               >

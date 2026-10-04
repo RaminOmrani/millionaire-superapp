@@ -2,7 +2,9 @@ import "server-only";
 import { and, asc, desc, eq } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
 import type { Banner } from "@/db/schema";
+import { holding } from "./holding";
 import { products } from "./products";
+import { toPersianDigits } from "@/lib/persian-digits";
 
 /** Plain data for the carousel (client component). */
 export interface BannerView {
@@ -44,8 +46,51 @@ export function toBannerView(b: Banner): BannerView {
   };
 }
 
-/** Active banners for a slot, respecting the optional start/end window. */
+/**
+ * Shown only while a slot has no live admin banner, so the layout never looks empty.
+ * Built strictly from content Ramin supplied (Garson-yar motto, holding facts) — no invented offers.
+ */
+function houseBanner(placement: Banner["placement"]): BannerView {
+  const garson = products.find((p) => p.slug === "garson");
+  const theme = (slug: string) => BANNER_THEMES.find((t) => t.value === slug) ?? BANNER_THEMES[0]!;
+  if (placement === "top" && garson) {
+    const t = theme("garson");
+    return {
+      id: -1,
+      title: "گارسون‌یار فعال شد",
+      subtitle: garson.motto?.replace(/^گارسون‌یار؛\s*/, "").replace(/\.$/, "") ?? garson.tagline,
+      ctaLabel: "آشنایی",
+      href: "/garson",
+      external: false,
+      audience: "both",
+      accent: t.accent,
+      accent2: t.accent2,
+      mark: garson.logo.mark,
+      markLight: garson.logo.markLight,
+    };
+  }
+  const t = theme("brand");
+  return {
+    id: -2,
+    title: `همراه +${toPersianDigits(holding.customers)} کسب‌وکار`,
+    subtitle: `در سراسر کشور، از سال ${toPersianDigits(holding.foundedYear)}`,
+    ctaLabel: "درخواست مشاوره",
+    href: "/consult",
+    external: false,
+    audience: "both",
+    accent: t.accent,
+    accent2: t.accent2,
+    mark: "/brand/millionaire/mark.svg",
+  };
+}
+
+/** Active banners for a slot, respecting the optional start/end window; house banner when empty. */
 export function getLiveBanners(placement: Banner["placement"]): BannerView[] {
+  const live = getAdminBanners(placement);
+  return live.length > 0 ? live : [houseBanner(placement)];
+}
+
+function getAdminBanners(placement: Banner["placement"]): BannerView[] {
   const now = Date.now();
   const rows = getDb()
     .select()
