@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowUpLeft, Clock, Info, LifeBuoy, MessageSquareText, Search, X } from "lucide-react";
+import { ArrowUpLeft, Clock, Search, X } from "lucide-react";
+import { ServiceIcon, type ServiceIconName } from "@/components/brand/ServiceIcon";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useId, useMemo, useRef, useState, type CSSProperties } from "react";
 import { searchItems, type SearchItem } from "@/lib/search";
@@ -94,10 +95,10 @@ export function Launcher({ products, index, supportUrl, topSlot }: Props) {
     }
   }
 
-  const services = [
-    { key: "support", label: "پشتیبانی", href: supportUrl, external: true, icon: LifeBuoy },
-    { key: "consult", label: "مشاوره", href: "/consult", icon: MessageSquareText },
-    { key: "about", label: "درباره‌ی ما", href: "/about", icon: Info },
+  const services: Array<{ key: ServiceIconName; label: string; href: string; external?: boolean }> = [
+    { key: "support", label: "پشتیبانی", href: supportUrl, external: true },
+    { key: "consult", label: "مشاوره", href: "/consult" },
+    { key: "about", label: "درباره ما", href: "/about" },
   ];
 
   const showPanel = open && query.trim().length > 0;
@@ -127,7 +128,7 @@ export function Launcher({ products, index, supportUrl, topSlot }: Props) {
             aria-activedescendant={showPanel && results[active] ? `${listId}-${active}` : undefined}
             autoComplete="off"
             enterKeyHint="search"
-            placeholder="جست‌وجو: محصول، پنل، پشتیبانی، تعرفه…"
+            placeholder="جست‌وجو در محصولات و خدمات"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -136,7 +137,7 @@ export function Launcher({ products, index, supportUrl, topSlot }: Props) {
             }}
             onFocus={() => setOpen(true)}
             onKeyDown={onKeyDown}
-            className="h-14 w-full bg-transparent text-base text-fg placeholder:text-fg-faint focus:outline-none sm:h-16 sm:text-lg [&::-webkit-search-cancel-button]:hidden"
+            className="h-13 w-full min-w-0 bg-transparent text-base text-fg placeholder:text-sm placeholder:text-fg-faint focus:outline-none sm:h-14 sm:placeholder:text-base [&::-webkit-search-cancel-button]:hidden"
           />
           {query ? (
             <button
@@ -222,7 +223,7 @@ export function Launcher({ products, index, supportUrl, topSlot }: Props) {
               >
                 <span
                   className={cn(
-                    "grain relative flex aspect-square w-full max-w-[84px] items-center justify-center overflow-hidden rounded-[26%] border bg-surface p-[20%] transition duration-300 group-hover:-translate-y-0.5 group-active:scale-95",
+                    "grain relative flex aspect-square w-full max-w-[76px] items-center justify-center overflow-hidden rounded-[26%] border bg-surface p-[20%] transition duration-300 group-hover:-translate-y-0.5 group-active:scale-95",
                     "border-[color-mix(in_oklab,var(--accent)_35%,transparent)] shadow-[0_16px_40px_-24px_color-mix(in_oklab,var(--accent)_90%,transparent)]",
                     p.locked && "opacity-75 saturate-[0.6]",
                   )}
@@ -251,11 +252,10 @@ export function Launcher({ products, index, supportUrl, topSlot }: Props) {
             </motion.li>
           ))}
           {services.map((s, i) => {
-            const Icon = s.icon;
             const inner = (
               <>
-                <span className="grain relative flex aspect-square w-full max-w-[84px] items-center justify-center overflow-hidden rounded-[26%] border border-line bg-surface transition duration-300 group-hover:-translate-y-0.5 group-active:scale-95">
-                  <Icon className="size-7 text-brand-red-light light:text-brand-red sm:size-8" aria-hidden />
+                <span className="grain relative flex aspect-square w-full max-w-[76px] items-center justify-center overflow-hidden rounded-[26%] border border-line bg-surface p-[22%] transition duration-300 group-hover:-translate-y-0.5 group-active:scale-95">
+                  <ServiceIcon name={s.key} className="h-full w-full" />
                 </span>
                 <span className="line-clamp-1 text-xs font-semibold sm:text-sm">{s.label}</span>
               </>

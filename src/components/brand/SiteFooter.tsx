@@ -1,7 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Clock, LifeBuoy, Mail, MapPin, Phone } from "lucide-react";
+import { HoldingLogo } from "@/components/brand/HoldingLogo";
 import { SocialLinks } from "@/components/brand/SocialLinks";
+import { MapButton } from "@/components/ui/MapButton";
 import { holding } from "@/content/holding";
 import { toPersianDigits } from "@/lib/persian-digits";
 
@@ -9,97 +10,70 @@ export function SiteFooter() {
   const year = toPersianDigits(new Date().toLocaleDateString("fa-IR-u-nu-latn", { year: "numeric" }));
 
   return (
-    <footer className="relative mt-24 border-t border-line/60 app:hidden">
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:px-8">
-        <div className="lg:col-span-5">
-          <Image
-            src={holding.logo.horizontal}
-            alt={holding.subtitle}
-            width={1080}
-            height={371}
-            className="h-12 w-auto"
-          />
-          <p className="display mt-6 max-w-sm text-2xl text-balance">{holding.slogan}</p>
-          <p className="mt-3 text-sm text-fg-muted">{holding.subtitle}</p>
-          <nav className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm" aria-label="پیوندها">
+    <footer className="relative mt-20 border-t border-line/60 app:hidden">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-12 lg:px-8">
+        <div className="lg:col-span-4">
+          <HoldingLogo className="h-11 w-auto" />
+          <p className="display mt-5 text-xl text-balance">{holding.slogan}</p>
+          <p className="mt-2 text-sm text-fg-muted">{holding.subtitle}</p>
+          <nav className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm" aria-label="پیوندها">
             <Link href="/#products" className="text-fg-muted hover:text-fg">محصولات</Link>
-            <Link href="/about" className="text-fg-muted hover:text-fg">درباره‌ی ما</Link>
+            <Link href="/about" className="text-fg-muted hover:text-fg">درباره ما</Link>
             <Link href="/consult" className="text-fg-muted hover:text-fg">درخواست مشاوره</Link>
           </nav>
-          <SocialLinks className="mt-6" />
         </div>
 
-        <dl className="grid gap-5 text-sm lg:col-span-7 lg:grid-cols-2">
-          <div className="flex items-start gap-3">
-            <Phone className="mt-0.5 size-4 shrink-0 text-fg-faint" aria-hidden />
-            <div>
-              <dt className="text-fg-faint">تلفن</dt>
-              <dd>
-                <a href={`tel:${holding.phone.replace(/-/g, "")}`} className="ltr-nums font-medium hover:text-fg">
-                  {toPersianDigits(holding.phone)}
-                </a>
-              </dd>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <Mail className="mt-0.5 size-4 shrink-0 text-fg-faint" aria-hidden />
-            <div>
-              <dt className="text-fg-faint">ایمیل</dt>
-              <dd>
-                <a href={`mailto:${holding.email}`} className="ltr-nums font-medium hover:text-fg">
-                  {holding.email}
-                </a>
-              </dd>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <Clock className="mt-0.5 size-4 shrink-0 text-fg-faint" aria-hidden />
-            <div>
-              <dt className="text-fg-faint">ساعت کاری</dt>
-              <dd className="font-medium">{holding.workingHours}</dd>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <MapPin className="mt-0.5 size-4 shrink-0 text-fg-faint" aria-hidden />
-            <div>
-              <dt className="text-fg-faint">آدرس</dt>
-              <dd className="leading-6">
-                {holding.address}
-                <a href={holding.mapUrl} target="_blank" rel="noopener noreferrer" className="mr-2 font-semibold underline-offset-4 hover:underline">
-                  نقشه
-                </a>
-              </dd>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 lg:col-span-2">
-            <LifeBuoy className="mt-0.5 size-4 shrink-0 text-fg-faint" aria-hidden />
-            <div>
-              <dt className="text-fg-faint">مرکز پشتیبانی همه‌ی محصولات</dt>
-              <dd>
-                <a
-                  href={holding.supportCenter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ltr-nums font-medium underline-offset-4 hover:underline"
-                >
-                  {holding.supportCenter.replace("https://", "")}
-                </a>
-              </dd>
-            </div>
-          </div>
+        <dl className="grid gap-5 text-sm sm:grid-cols-2 lg:col-span-8">
+          <Item icon={Phone} label="تلفن">
+            <a href={`tel:${holding.phone.replace(/-/g, "")}`} className="ltr-nums font-medium hover:text-fg">
+              {toPersianDigits(holding.phone)}
+            </a>
+          </Item>
+          <Item icon={Mail} label="ایمیل">
+            <a href={`mailto:${holding.email}`} className="ltr-nums font-medium hover:text-fg">
+              {holding.email}
+            </a>
+          </Item>
+          <Item icon={Clock} label="ساعت کاری">
+            <span className="font-medium">{holding.workingHours}</span>
+          </Item>
+          <Item icon={LifeBuoy} label="مرکز پشتیبانی همه‌ی محصولات">
+            <a href={holding.supportCenter} target="_blank" rel="noopener noreferrer" className="ltr-nums font-medium underline-offset-4 hover:underline">
+              {holding.supportCenter.replace("https://", "")}
+            </a>
+          </Item>
+          <Item icon={MapPin} label="آدرس" className="sm:col-span-2">
+            <span className="block leading-7">{holding.address}</span>
+            <MapButton size="sm" className="mt-2" />
+          </Item>
         </dl>
       </div>
 
       <div className="border-t border-line/60">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-5 text-xs text-fg-faint sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4 text-xs text-fg-faint sm:px-6 lg:px-8">
           <span>
             © {year} {holding.nameFa}
           </span>
-          <a href={holding.website} target="_blank" rel="noopener noreferrer" className="ltr-nums hover:text-fg">
-            softmiliac.com
-          </a>
+          <div className="flex items-center gap-4">
+            <a href={holding.website} target="_blank" rel="noopener noreferrer" className="ltr-nums hover:text-fg">
+              softmiliac.com
+            </a>
+            <SocialLinks />
+          </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+function Item({ icon: Icon, label, className, children }: { icon: typeof Phone; label: string; className?: string; children: React.ReactNode }) {
+  return (
+    <div className={`flex items-start gap-3 ${className ?? ""}`}>
+      <Icon className="mt-0.5 size-4 shrink-0 text-fg-faint" aria-hidden />
+      <div className="min-w-0">
+        <dt className="text-fg-faint">{label}</dt>
+        <dd className="mt-0.5">{children}</dd>
+      </div>
+    </div>
   );
 }

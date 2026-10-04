@@ -6,184 +6,153 @@ import { ArrowUpLeft, Clock } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import type { CSSProperties } from "react";
 import type { Product } from "@/content/products";
+import { cn } from "@/lib/utils";
 
 /** Only the fields the tile renders — works for base and resolved products. */
 export type TileProduct = Pick<Product, "slug" | "nameFa" | "tagline" | "status" | "accent" | "logo">;
-import { cn } from "@/lib/utils";
 
 interface Props {
   product: TileProduct;
   index: number;
-  /** Tailwind grid placement classes for the asymmetric layout */
+  /** Tailwind grid placement classes */
   className?: string;
-  /** Hero tile: larger logo and title */
-  emphasis?: boolean;
 }
 
 const COMING_SOON = "به‌زودی";
 
-export function ProductTile({ product, index, className, emphasis = false }: Props) {
+/**
+ * Product tile. Every tile shows the product mark in the same fixed box so all logos read at the
+ * same size (Ramin). The accent bleed uses `accent.glow` when the primary is too dark to show
+ * (Menu Club navy), so every tile lights up on hover.
+ */
+export function ProductTile({ product, index, className }: Props) {
   const reduce = useReducedMotion();
-  const locked = product.status === "coming_soon";
+  const soon = product.status === "coming_soon";
+  const glow = product.accent.glow ?? product.accent.primary;
 
   const style = {
     "--accent": product.accent.primary,
     "--accent-2": product.accent.secondary,
+    "--glow": glow,
   } as CSSProperties;
 
-  const logoClass = cn(
-    "mx-auto h-auto w-auto object-contain drop-shadow-[0_18px_40px_rgba(0,0,0,0.45)] light:drop-shadow-[0_12px_30px_rgba(0,0,0,0.12)]",
-    emphasis ? "max-h-48 sm:max-h-64" : "max-h-28 sm:max-h-36",
-  );
+  const entrance = reduce
+    ? {}
+    : {
+        initial: { opacity: 0, y: 24 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: "-10% 0px" },
+        transition: { duration: 0.6, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] as const },
+      };
 
-  const inner = (
-    <>
-      {/* accent bleed */}
+  return (
+    <motion.div
+      {...entrance}
+      style={style}
+      initial="rest"
+      animate="rest"
+      whileHover="hover"
+      whileTap={reduce ? undefined : { scale: 0.985 }}
+      className={cn(
+        "grain group relative isolate flex min-h-[230px] overflow-hidden rounded-tile border bg-surface",
+        "border-[color-mix(in_oklab,var(--glow)_35%,transparent)]",
+        "shadow-[0_24px_60px_-36px_color-mix(in_oklab,var(--glow)_75%,transparent)]",
+        "transition-[border-color,box-shadow,opacity,filter] duration-500",
+        "hover:border-[color-mix(in_oklab,var(--glow)_75%,transparent)] hover:shadow-[0_34px_80px_-30px_color-mix(in_oklab,var(--glow)_90%,transparent)]",
+        soon && "opacity-80 saturate-[0.65] hover:opacity-100 hover:saturate-100",
+        className,
+      )}
+    >
+      {/* accent bleed — brightens on hover */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 transition-opacity duration-700"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-80 transition-opacity duration-500 group-hover:opacity-100"
         style={{
           background:
-            "radial-gradient(120% 90% at 100% 0%, color-mix(in oklab, var(--accent) calc(var(--tile-glow) * 100%), transparent) 0%, transparent 60%)," +
+            "radial-gradient(120% 90% at 100% 0%, color-mix(in oklab, var(--glow) calc(var(--tile-glow) * 110%), transparent) 0%, transparent 60%)," +
             "radial-gradient(80% 70% at 0% 100%, color-mix(in oklab, var(--accent-2) calc(var(--tile-glow) * 55%), transparent) 0%, transparent 65%)",
         }}
       />
-      {/* moving glow blob */}
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute -z-10 size-[60%] rounded-full blur-3xl"
-        style={{
-          background: "color-mix(in oklab, var(--accent) 65%, transparent)",
-          top: "-20%",
-          right: "-10%",
-          opacity: 0.6,
-        }}
-        variants={{
-          rest: { x: 0, y: 0, scale: 1 },
-          hover: { x: -24, y: 24, scale: 1.15 },
-        }}
+        className="pointer-events-none absolute -z-10 size-[55%] rounded-full blur-3xl"
+        style={{ background: "color-mix(in oklab, var(--glow) 70%, transparent)", top: "-20%", right: "-10%", opacity: 0.55 }}
+        variants={{ rest: { x: 0, y: 0, scale: 1 }, hover: { x: -24, y: 24, scale: 1.2 } }}
         transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
       />
 
-      <div className="relative z-10 flex h-full flex-col justify-between gap-8 p-6 sm:p-8">
-        <div className="flex items-start justify-between gap-4">
+      <Link
+        href={`/${product.slug}`}
+        className="absolute inset-0 z-20 rounded-tile"
+        aria-label={`${product.nameFa} — ${product.tagline}${soon ? " (به‌زودی)" : ""}`}
+      />
+
+      <div className="relative z-10 flex w-full flex-col gap-5 p-5 sm:p-6">
+        {/* status (start) · link arrow (end = top-left in RTL) */}
+        <div className="flex w-full items-start justify-between gap-4">
           <span
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold tracking-wide",
-              locked
-                ? "border-line bg-bg/40 text-fg-muted"
-                : "border-white/15 bg-white/10 text-white light:border-line light:bg-bg/60 light:text-fg",
+              "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold",
+              soon ? "border-line bg-bg/40 text-fg-muted" : "border-white/15 bg-white/10 text-white light:border-line light:bg-bg/60 light:text-fg",
             )}
           >
-            {locked ? (
+            {soon ? (
               <>
                 <Clock className="size-3" aria-hidden />
                 {COMING_SOON}
               </>
             ) : (
               <>
-                <span className="size-1.5 rounded-full bg-[var(--accent)] light:bg-[var(--accent)]" aria-hidden />
+                <span className="size-1.5 rounded-full bg-[var(--glow)]" aria-hidden />
                 فعال
               </>
             )}
           </span>
-
-          {(
-            <motion.span
-              aria-hidden
-              className="inline-flex size-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white light:border-line light:bg-bg/60 light:text-fg"
-              variants={{ rest: { x: 0, y: 0 }, hover: { x: -4, y: -4 } }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-              <ArrowUpLeft className="size-5" />
-            </motion.span>
-          )}
+          <motion.span
+            aria-hidden
+            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white light:border-line light:bg-bg/60 light:text-fg"
+            variants={{ rest: { x: 0, y: 0 }, hover: { x: -4, y: -4 } }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          >
+            <ArrowUpLeft className="size-4" />
+          </motion.span>
         </div>
 
-        <div
-          className={cn(
-            "relative flex items-center justify-center",
-            emphasis ? "min-h-40 sm:min-h-56" : "min-h-28 sm:min-h-36",
-          )}
-        >
+        <div className="flex h-24 items-center justify-center sm:h-28">
           <motion.div
-            variants={{ rest: { scale: 1, y: 0 }, hover: { scale: 1.04, y: -4 } }}
+            variants={{ rest: { scale: 1, y: 0 }, hover: { scale: 1.06, y: -3 } }}
             transition={{ type: "spring", stiffness: 220, damping: 22 }}
-            className="w-full"
+            className="flex h-full items-center justify-center"
           >
             <Image
-              src={product.logo.landing}
+              src={product.logo.mark}
               alt={`لوگوی ${product.nameFa}`}
-              width={1080}
-              height={720}
+              width={200}
+              height={200}
               priority={index < 2}
-              className={cn(logoClass, product.logo.landingLight && "light:hidden")}
+              className={cn(
+                "h-full w-auto max-w-[140px] object-contain drop-shadow-[0_16px_34px_rgba(0,0,0,0.45)]",
+                product.logo.markLight && "light:hidden",
+              )}
             />
-            {product.logo.landingLight && (
+            {product.logo.markLight && (
               <Image
-                src={product.logo.landingLight}
+                src={product.logo.markLight}
                 alt=""
                 aria-hidden
-                width={1080}
-                height={720}
-                className={cn(logoClass, "hidden light:block")}
+                width={200}
+                height={200}
+                className="hidden h-full w-auto max-w-[140px] object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.12)] light:block"
               />
             )}
           </motion.div>
         </div>
 
-        <div>
-          <h3
-            className={cn(
-              "display text-balance",
-              emphasis ? "text-3xl sm:text-4xl lg:text-5xl" : "text-2xl sm:text-3xl",
-            )}
-          >
-            {product.nameFa}
-          </h3>
-          <p className={cn("mt-2 text-fg-muted", emphasis ? "text-base sm:text-lg" : "text-sm sm:text-base")}>
-            {product.tagline}
-          </p>
+        <div className="text-center">
+          <h3 className="display text-balance text-xl sm:text-2xl">{product.nameFa}</h3>
+          <p className="mt-1.5 text-sm text-fg-muted">{product.tagline}</p>
         </div>
       </div>
-    </>
-  );
-
-  const shell = cn(
-    "grain group relative isolate flex h-full min-h-[300px] overflow-hidden rounded-tile border bg-surface",
-    "border-[color-mix(in_oklab,var(--accent)_35%,transparent)]",
-    "shadow-[0_30px_80px_-40px_color-mix(in_oklab,var(--accent)_70%,transparent)]",
-    "transition-[border-color,box-shadow] duration-500",
-    locked && "opacity-75 saturate-[0.6]",
-    "hover:border-[color-mix(in_oklab,var(--accent)_70%,transparent)] hover:shadow-[0_40px_100px_-30px_color-mix(in_oklab,var(--accent)_85%,transparent)] hover:opacity-100 hover:saturate-100",
-    className,
-  );
-
-  const entrance = reduce
-    ? {}
-    : {
-        initial: { opacity: 0, y: 28 },
-        whileInView: { opacity: 1, y: 0 },
-        viewport: { once: true, margin: "-10% 0px" },
-        transition: { duration: 0.7, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] as const },
-      };
-
-  return (
-    <motion.div
-      {...entrance}
-      className={shell}
-      style={style}
-      initial="rest"
-      whileHover="hover"
-      whileTap={reduce ? undefined : { scale: 0.985 }}
-      animate="rest"
-    >
-      <Link
-        href={`/${product.slug}`}
-        className="absolute inset-0 z-20 rounded-tile"
-        aria-label={`${product.nameFa} — ${product.tagline}${locked ? " (به‌زودی)" : ""}`}
-      />
-      {inner}
     </motion.div>
   );
 }

@@ -20,7 +20,7 @@
   --color-brand-red-light: #981818;
   --color-brand-ink: #1a1a1a;
   --color-brand-paper: #f7f5f2;
-  --color-brand-dark: #0f0f12;
+  --color-brand-dark: #18181d;
 
   --color-crm: #981818;
   --color-crm-deep: #600000;
@@ -38,13 +38,14 @@
 /* ---------- Semantic surface tokens (theme-aware) ---------- */
 :root,
 [data-theme="dark"] {
-  --bg: #0f0f12;
-  --bg-elevated: #151519;
+  /* Lifted from #0f0f12 at Ramin's request («دارک مود خیلی تیره است») */
+  --bg: #18181d;
+  --bg-elevated: #1f1f25;
   --fg: #f7f5f2;
-  --fg-muted: color-mix(in oklab, #f7f5f2 62%, transparent);
-  --fg-faint: color-mix(in oklab, #f7f5f2 38%, transparent);
-  --line: color-mix(in oklab, #f7f5f2 12%, transparent);
-  --surface: color-mix(in oklab, #ffffff 4%, #0f0f12);
+  --fg-muted: color-mix(in oklab, #f7f5f2 68%, transparent);
+  --fg-faint: color-mix(in oklab, #f7f5f2 46%, transparent);
+  --line: color-mix(in oklab, #f7f5f2 14%, transparent);
+  --surface: color-mix(in oklab, #ffffff 6%, #18181d);
   --ring: #f8b878;
   --grain-opacity: 0.08;
   --tile-glow: 0.55;

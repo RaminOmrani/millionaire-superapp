@@ -41,7 +41,7 @@ export function ActionCard({ action, index, className, children }: Props) {
   const anchor = { id: action.key, className: "scroll-mt-28" };
   const shell = cn(
     anchor.className,
-    "grain group relative isolate flex min-h-44 flex-col overflow-hidden rounded-tile border bg-surface p-6",
+    "grain group relative isolate flex min-h-40 flex-col overflow-hidden rounded-tile border bg-surface p-5 sm:p-6",
     "border-[color-mix(in_oklab,var(--accent)_28%,transparent)]",
     "transition-[border-color,box-shadow,transform] duration-500",
     locked
@@ -77,8 +77,8 @@ export function ActionCard({ action, index, className, children }: Props) {
         ) : null}
       </div>
 
-      <div className="relative z-10 mt-6 flex-1">
-        <h3 className="display text-xl sm:text-2xl">{action.label}</h3>
+      <div className="relative z-10 mt-5 flex-1">
+        <h3 className="display text-lg sm:text-xl">{action.label}</h3>
         {locked && action.teaser && <p className="mt-2 text-sm leading-7 text-fg-muted">{action.teaser}</p>}
         {external && (
           <p className="ltr-nums mt-1 inline-flex items-center gap-1 text-xs text-fg-faint">

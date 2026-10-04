@@ -48,7 +48,7 @@ export function buildSearchIndex(products: ResolvedProduct[]): SearchItem[] {
   const pages: Array<Omit<SearchItem, "haystack"> & { keywords: string }> = [
     { id: "pg:consult", kind: "page", title: "درخواست مشاوره", subtitle: "کارشناسان ما با شما تماس می‌گیرند", href: "/consult", keywords: "مشاوره تماس خرید راهنمایی فرم" },
     { id: "pg:support", kind: "page", title: "مرکز پشتیبانی", subtitle: "support.softmiliac.com", href: holding.supportCenter, external: true, keywords: "تیکت پشتیبانی مشکل ticket support" },
-    { id: "pg:about", kind: "page", title: "درباره‌ی هلدینگ", subtitle: holding.subtitle, href: "/about", keywords: `درباره ما هلدینگ میلیونر آدرس ایمیل تلفن مدیرعامل نقشه اینستاگرام آپارات ${holding.address}` },
+    { id: "pg:about", kind: "page", title: "درباره ما", subtitle: holding.subtitle, href: "/about", keywords: `درباره ما هلدینگ میلیونر آدرس ایمیل تلفن مدیرعامل نقشه اینستاگرام آپارات ${holding.address}` },
     { id: "pg:call", kind: "page", title: "تماس تلفنی", subtitle: holding.phone, href: `tel:${holding.phone.replace(/-/g, "")}`, keywords: "تلفن تماس شماره call" },
   ];
   for (const pg of pages) {

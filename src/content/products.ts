@@ -60,6 +60,8 @@ export interface Product {
     primary: string;
     /** Secondary accent for gradients (hex) */
     secondary: string;
+    /** Brighter variant for glows/hover on dark surfaces when `primary` is too dark to show */
+    glow?: string;
   };
   logo: {
     /** Large logo for the landing tile (dark surfaces) */
@@ -100,7 +102,8 @@ export const products: readonly Product[] = [
     status: "active",
     accent: { primary: "#980000", secondary: "#600000" },
     logo: {
-      landing: "/brand/millionaire/logo-horizontal.svg",
+      landing: "/brand/millionaire/logo-horizontal-dark.svg",
+      landingLight: "/brand/millionaire/logo-horizontal.svg",
       mark: "/brand/millionaire/mark.svg",
     },
     actions: [
@@ -124,11 +127,9 @@ export const products: readonly Product[] = [
     status: "active",
     accent: { primary: "#981818", secondary: "#600000" },
     logo: {
-      // The deep-red wordmark of the full lockup has no contrast on dark surfaces,
-      // so dark tiles show the 3D mark; light surfaces get the full new lockup
-      // (exported from LOGO.ai with the tagline outlined to paths).
+      // Same composition in both modes (Ramin): the 3D mark. The full lockup's deep-red
+      // wordmark has no contrast on dark, so it is not used on the public site.
       landing: "/brand/crm/mark-red.svg",
-      landingLight: "/brand/crm/lockup-red.svg",
       mark: "/brand/crm/mark-red.svg",
     },
     actions: [
@@ -191,7 +192,7 @@ export const products: readonly Product[] = [
       "برای کسب‌وکارهایی که به جزئیات اهمیت می‌دهند. اعتماد، تجربه، زیبایی. منوی دیجیتال QR برای کافه و رستوران.",
     website: "https://menusclub.ir",
     status: "active",
-    accent: { primary: "#101840", secondary: "#f8b878" },
+    accent: { primary: "#101840", secondary: "#f8b878", glow: "#374391" },
     logo: {
       // Persian lockups (tagline outlined to paths from LOGO.ai): white on dark, navy on light.
       landing: "/brand/menuclub/swoosh-2.svg",
@@ -214,8 +215,9 @@ export const products: readonly Product[] = [
     tagline: "سفارش‌گیری هوشمند رستوران",
     description:
       "گارسون‌یار یک نرم‌افزار تحت وب حرفه‌ای و کامل برای مدیریت رستوران، کافه و مجموعه‌های غذایی است که تمام نیازهای روزمره شما را در یک پلتفرم یکپارچه پوشش می‌دهد. این سیستم با طراحی مدرن، رابط کاربری فارسی و کاملاً ساده، به شما کمک می‌کند تا سفارش‌گیری، مدیریت میزها، حسابداری و نظارت بر پرسنل را با بیشترین سرعت و دقت انجام دهید.",
-    // website garson.softmiliac.com is not public yet — not linked
-    status: "coming_soon",
+    // Ramin (1405/07): Garson-yar is live. Site/panel from data.md §3.5.
+    website: "https://garson.softmiliac.com",
+    status: "active",
     motto: "گارسون‌یار؛ دستیار هوشمند شما در مدیریت رستوران.",
     highlights: [
       "کامل و یکپارچه — تمام نیازهای مدیریت رستوران در یک نرم‌افزار",
@@ -338,16 +340,16 @@ export const products: readonly Product[] = [
     ],
     accent: { primary: "#c80840", secondary: "#101840" },
     logo: {
-      // logo-full.svg is crimson + navy (vanishes on dark); white/crimson mark for dark.
+      // Same composition in both modes: mark + «GARSON APP» (white text on dark, navy on light).
       landing: "/brand/garson/mark.svg",
-      landingLight: "/brand/garson/logo-full.svg",
+      landingLight: "/brand/garson/lockup-vertical.svg",
       mark: "/brand/garson/mark-round.svg",
       markLight: "/brand/garson/logo-full.svg",
     },
     actions: [
-      { key: "panel", label: ACTION_LABELS.panel, enabled: false, reason: "future" },
-      { key: "support", label: ACTION_LABELS.support, enabled: false, reason: "future" },
-      { key: "pricing", label: ACTION_LABELS.pricing, enabled: false, reason: "future" },
+      { key: "panel", label: ACTION_LABELS.panel, enabled: true, href: "https://garson.softmiliac.com" },
+      { key: "support", label: ACTION_LABELS.support, enabled: true, href: SUPPORT_URL },
+      { key: "pricing", label: ACTION_LABELS.pricing, enabled: false, reason: "missing_data" },
       { key: "details", label: ACTION_LABELS.details, enabled: true },
       { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future", teaser: AI_TEASER },
     ],

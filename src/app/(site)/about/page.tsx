@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import { Building2, Clock, ExternalLink, Mail, MapPin, Phone, User } from "lucide-react";
+import { Clock, Mail, MapPin, Phone, User } from "lucide-react";
+import { HoldingLogo } from "@/components/brand/HoldingLogo";
+import { MapButton } from "@/components/ui/MapButton";
 import { SocialLinks } from "@/components/brand/SocialLinks";
 import { holding } from "@/content/holding";
 import { getResolvedProducts } from "@/content/resolve";
@@ -10,7 +11,7 @@ import { toPersianDigits } from "@/lib/persian-digits";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "درباره‌ی هلدینگ",
+  title: "درباره ما",
   description: `${holding.nameFa} — فعال در حوزه‌ی ${holding.field} از سال ${toPersianDigits(holding.foundedYear)}، همکار بیش از ${toPersianDigits(holding.customers)} کسب‌وکار در سراسر کشور.`,
 };
 
@@ -33,35 +34,36 @@ export default function AboutPage() {
               "radial-gradient(60% 50% at 90% 0%, color-mix(in oklab, var(--color-brand-red) 40%, transparent), transparent 70%)",
           }}
         />
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-          <div className="grid items-end gap-10 lg:grid-cols-12">
-            <div className="lg:col-span-7">
-              <p className="mb-4 text-sm font-semibold text-fg-muted">{holding.subtitle}</p>
-              <h1 className="display text-balance text-4xl sm:text-5xl lg:text-6xl">{holding.nameFa}</h1>
-              <p className="display mt-4 text-xl text-fg-muted sm:text-2xl">{holding.slogan}</p>
-              <p className="mt-6 max-w-2xl text-base leading-8 text-fg-muted sm:text-lg">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+          <div className="grid items-center gap-8 lg:grid-cols-12">
+            {/* logo first (Ramin): top on phones, right column on desktop */}
+            <div className="lg:col-span-4">
+              <HoldingLogo variant="vertical" className="mx-auto h-40 w-auto sm:h-52" />
+            </div>
+            <div className="lg:col-span-8">
+              <p className="mb-3 text-sm font-semibold text-fg-muted">{holding.subtitle}</p>
+              <h1 className="display text-balance text-3xl sm:text-4xl lg:text-5xl">{holding.nameFa}</h1>
+              <p className="display mt-3 text-lg text-fg-muted sm:text-xl">{holding.slogan}</p>
+              <p className="mt-5 max-w-2xl text-base leading-8 text-fg-muted">
                 {holding.nameFa} از سال {toPersianDigits(holding.foundedYear)} در حوزه‌ی {holding.field} فعالیت می‌کند و امروز با
                 بیش از {toPersianDigits(holding.customers)} کسب‌وکار در سراسر کشور همکاری دارد. دفتر مرکزی ما در{" "}
                 {holding.city} است.
               </p>
             </div>
-            <div className="lg:col-span-5">
-              <Image src={holding.logo.vertical} alt={holding.subtitle} width={967} height={1080} className="mx-auto h-48 w-auto sm:h-64" />
-            </div>
           </div>
 
-          <dl className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <dl className="mt-10 grid grid-cols-3 gap-3 sm:gap-4">
             {facts.map((f) => (
-              <div key={f.label} className="grain rounded-tile border border-line bg-surface p-6">
-                <dd className="display text-4xl sm:text-5xl">{f.value}</dd>
-                <dt className="mt-2 text-sm text-fg-muted">{f.label}</dt>
+              <div key={f.label} className="grain flex flex-col items-center rounded-tile border border-line bg-surface px-2 py-5 text-center sm:p-6">
+                <dd className="display text-2xl sm:text-4xl">{f.value}</dd>
+                <dt className="mt-2 text-xs leading-5 text-fg-muted sm:text-sm">{f.label}</dt>
               </div>
             ))}
           </dl>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-6xl px-4 pb-8 sm:px-6 lg:px-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-12">
           <div className="grain rounded-tile border border-line bg-surface p-6 lg:col-span-5">
             <h2 className="display text-2xl">تماس</h2>
@@ -83,16 +85,7 @@ export default function AboutPage() {
                 <p className="mt-1 text-fg-muted">
                   کد پستی: <span className="ltr-nums">{toPersianDigits(holding.postalCode)}</span>
                 </p>
-                <a
-                  href={holding.mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-fg px-4 py-2 text-xs font-bold text-bg hover:opacity-90"
-                >
-                  <Building2 className="size-3.5" aria-hidden />
-                  مسیریابی با نشان
-                  <ExternalLink className="size-3" aria-hidden />
-                </a>
+                <MapButton size="sm" className="mt-3" />
               </Row>
             </dl>
             <div className="mt-6 border-t border-line pt-5">

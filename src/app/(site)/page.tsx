@@ -93,7 +93,7 @@ export default function LandingPage() {
       )}
 
       {/* ---------- Banner ---------- */}
-      <section className="mx-auto mt-10 max-w-7xl px-4 sm:mt-14 sm:px-6 lg:px-8 app:hidden">
+      <section className="mx-auto mt-10 max-w-6xl px-4 sm:mt-12 sm:px-6 lg:px-8 app:hidden">
         <div className="grain relative overflow-hidden rounded-[2rem] border border-line bg-surface">
           <div
             aria-hidden
@@ -104,30 +104,28 @@ export default function LandingPage() {
                 "radial-gradient(50% 70% at 0% 100%, color-mix(in oklab, var(--color-brand-red-deep) 40%, transparent), transparent 70%)",
             }}
           />
-          <div className="grid items-center gap-10 p-6 sm:p-10 lg:grid-cols-12 lg:p-14">
+          <div className="grid items-center gap-8 p-6 sm:p-8 lg:grid-cols-12 lg:p-10">
             <div className="lg:col-span-7">
               <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-line bg-bg/40 px-3 py-1 text-xs font-semibold text-fg-muted">
                 <span className="size-1.5 rounded-full bg-brand-red" aria-hidden />
                 {holding.subtitle}، از سال {toPersianDigits(holding.foundedYear)}
               </p>
-              <h1 className="display text-balance text-3xl leading-[1.15] sm:text-5xl lg:text-6xl">{holding.slogan}</h1>
-              <p className="mt-5 max-w-xl text-base leading-8 text-fg-muted sm:text-lg">
+              <h1 className="display text-balance text-3xl leading-[1.15] sm:text-4xl lg:text-5xl">{holding.slogan}</h1>
+              <p className="mt-4 max-w-xl text-base leading-8 text-fg-muted">
                 همه‌ی محصولات {holding.nameFa}، یک‌جا. محصول خود را انتخاب کنید و به پنل، پشتیبانی و تعرفه‌های آن
                 دسترسی داشته باشید.
               </p>
-              <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-4">
-                <div>
-                  <dd className="display text-3xl sm:text-4xl">+{toPersianDigits(holding.customers)}</dd>
-                  <dt className="text-sm text-fg-muted">کسب‌وکار همکار در سراسر کشور</dt>
-                </div>
-                <div>
-                  <dd className="display text-3xl sm:text-4xl">+{toPersianDigits(yearsActive)}</dd>
-                  <dt className="text-sm text-fg-muted">سال تجربه</dt>
-                </div>
-                <div>
-                  <dd className="display text-3xl sm:text-4xl">{toPersianDigits(activeCount)}</dd>
-                  <dt className="text-sm text-fg-muted">محصول فعال</dt>
-                </div>
+              <dl className="mt-7 grid max-w-xl grid-cols-3 gap-3">
+                {[
+                  { v: `+${toPersianDigits(holding.customers)}`, l: "کسب‌وکار همکار در سراسر کشور" },
+                  { v: `+${toPersianDigits(yearsActive)}`, l: "سال تجربه" },
+                  { v: toPersianDigits(activeCount), l: "محصول فعال" },
+                ].map((f) => (
+                  <div key={f.l} className="flex flex-col items-center rounded-2xl border border-line bg-bg/30 px-2 py-3 text-center">
+                    <dd className="display text-2xl sm:text-3xl">{f.v}</dd>
+                    <dt className="mt-1 text-[11px] leading-5 text-fg-muted sm:text-xs">{f.l}</dt>
+                  </div>
+                ))}
               </dl>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Link
@@ -147,18 +145,18 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="hidden lg:col-span-5 lg:block">
-              <HeroVisual className="mx-auto max-w-[400px]" />
+              <HeroVisual className="mx-auto max-w-[320px]" />
             </div>
           </div>
         </div>
       </section>
 
       {/* ---------- Products ---------- */}
-      <section id="products" className="mt-16 scroll-mt-24 sm:mt-24 app:mt-10">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section id="products" className="mt-14 scroll-mt-24 sm:mt-20 app:mt-10">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <header className="mb-8 max-w-2xl sm:mb-10 app:mb-5">
             <p className="text-sm font-bold text-brand-red-light light:text-brand-red">محصولات هلدینگ</p>
-            <h2 className="display mt-2 text-3xl sm:text-4xl">یک برند برای هر نیاز</h2>
+            <h2 className="display mt-2 text-2xl sm:text-3xl">یک برند برای هر نیاز</h2>
             <p className="mt-3 text-base leading-8 text-fg-muted app:hidden">
               هر محصول، یک برند مستقل زیر یک سقف است. برای ورود به پنل، پشتیبانی و تعرفه‌ها روی کارت هر محصول بزنید.
             </p>

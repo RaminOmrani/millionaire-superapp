@@ -28,7 +28,9 @@ export const holding = {
   appDomain: "app.softmiliac.com",
   logo: {
     horizontal: "/brand/millionaire/logo-horizontal.svg",
+    horizontalDark: "/brand/millionaire/logo-horizontal-dark.svg",
     vertical: "/brand/millionaire/logo-vertical.svg",
+    verticalDark: "/brand/millionaire/logo-vertical-dark.svg",
     mark: "/brand/millionaire/mark.svg",
   },
 } as const;

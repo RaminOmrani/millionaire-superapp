@@ -11,7 +11,7 @@ const TABS = [
   { key: "search", label: "جست‌وجو", href: "/#search", icon: Search },
   { key: "consult", label: "مشاوره", href: "/consult", icon: MessageSquareText },
   { key: "support", label: "پشتیبانی", href: holding.supportCenter, icon: LifeBuoy, external: true },
-  { key: "about", label: "درباره", href: "/about", icon: Info },
+  { key: "about", label: "درباره ما", href: "/about", icon: Info },
 ] as const;
 
 /** Bottom tab bar — installed app only (hidden on the website via the `app:` variant). */

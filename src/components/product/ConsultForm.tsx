@@ -122,12 +122,11 @@ export function ConsultForm({ defaultProduct = "" }: { defaultProduct?: string }
         </div>
       </div>
 
-      <div className="mt-8 flex items-center justify-between gap-4">
-        <p className="text-xs text-fg-faint">فیلدهای ستاره‌دار الزامی هستند.</p>
+      <div className="mt-8 flex justify-end">
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex items-center gap-2 rounded-full bg-brand-red px-6 py-3 text-base font-bold text-white shadow-[0_8px_30px_-10px_var(--color-brand-red)] transition hover:bg-brand-red-light active:scale-[0.98] disabled:opacity-60"
+          className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-brand-red px-6 py-3 text-base font-bold text-white shadow-[0_8px_30px_-10px_var(--color-brand-red)] transition hover:bg-brand-red-light active:scale-[0.98] disabled:opacity-60"
         >
           {pending ? <LoaderCircle className="size-4 animate-spin" aria-hidden /> : <Send className="size-4" aria-hidden />}
           ثبت درخواست

@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Check, Clock, ExternalLink, Lock, MessageSquareText, Sparkles, Star } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Clock, ExternalLink, LifeBuoy, Lock, MessageSquareText, Phone, Sparkles, Star } from "lucide-react";
 import { ActionCard } from "@/components/product/ActionCard";
+import { Expandable } from "@/components/product/Expandable";
+import { holding } from "@/content/holding";
 import { getProduct, type ActionKey } from "@/content/products";
 import { getResolvedProduct, type ResolvedAction, type ResolvedProduct } from "@/content/resolve";
 import { toPersianDigits } from "@/lib/persian-digits";
@@ -25,123 +27,59 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   };
 }
 
-/** Asymmetric placement of the five action cards on desktop. */
-const ACTION_LAYOUT: Record<ActionKey, string> = {
-  panel: "lg:col-span-4",
-  support: "lg:col-span-4",
-  pricing: "lg:col-span-4",
-  details: "lg:col-span-8",
-  ai: "lg:col-span-4",
-};
-
 export default async function ProductHubPage({ params }: { params: Params }) {
   const slug = (await params).product;
   const product = getResolvedProduct(slug);
   if (!product) notFound();
 
   const locked = product.status === "coming_soon";
+  const phone = product.phone ?? holding.phone;
   const pricing = product.actions.find((a) => a.key === "pricing");
   const hasPlans = !!pricing?.enabled && !!pricing.plans?.length;
   // With real plans the pricing card becomes a full-width row at the end; details widens to match.
-  const PLAN_ORDER: ActionKey[] = ["panel", "support", "ai", "details", "pricing"];
+  // Short cards first; «اطلاعات و جزئیات» always last and full width (click to expand).
+  const ORDER: ActionKey[] = ["panel", "support", "ai", "pricing", "details"];
+  const ordered = [...product.actions].sort((a, b) => ORDER.indexOf(a.key) - ORDER.indexOf(b.key));
   const richDetails = !!product.featureGroups?.length && product.features.length === 0;
-  // Rich details (full-width) go last so the four short cards share one row.
-  const RICH_ORDER: ActionKey[] = ["panel", "support", "pricing", "ai", "details"];
-  const ordered = hasPlans
-    ? [...product.actions].sort((a, b) => PLAN_ORDER.indexOf(a.key) - PLAN_ORDER.indexOf(b.key))
-    : richDetails
-      ? [...product.actions].sort((a, b) => RICH_ORDER.indexOf(a.key) - RICH_ORDER.indexOf(b.key))
-      : product.actions;
   const layoutFor = (key: ActionKey) => {
-    if (key === "details" && richDetails) return "sm:col-span-2 lg:col-span-12";
-    if (richDetails && !hasPlans) return "lg:col-span-3";
-    if (!hasPlans) return ACTION_LAYOUT[key];
-    if (key === "pricing" || key === "details") return "sm:col-span-2 lg:col-span-12";
-    return "lg:col-span-4";
+    if (key === "details") return "sm:col-span-2 lg:col-span-12";
+    if (key === "pricing" && hasPlans) return "sm:col-span-2 lg:col-span-12";
+    return hasPlans ? "lg:col-span-4" : "lg:col-span-3";
   };
 
   return (
     <div
       className="relative"
-      style={{ "--accent": product.accent.primary, "--accent-2": product.accent.secondary } as React.CSSProperties}
+      style={
+        {
+          "--accent": product.accent.primary,
+          "--accent-2": product.accent.secondary,
+          "--glow": product.accent.glow ?? product.accent.primary,
+        } as React.CSSProperties
+      }
     >
-      {/* ---------- Brand header ---------- */}
+      {/* ---------- Brand header: back link → logo → name/tagline → shared meta → consult CTA ---------- */}
       <section className="grain relative overflow-hidden">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
             background:
-              "radial-gradient(70% 60% at 100% 0%, color-mix(in oklab, var(--accent) 45%, transparent), transparent 70%)," +
+              "radial-gradient(70% 60% at 100% 0%, color-mix(in oklab, var(--glow) 45%, transparent), transparent 70%)," +
               "radial-gradient(50% 45% at 0% 100%, color-mix(in oklab, var(--accent-2) 35%, transparent), transparent 70%)",
           }}
         />
 
-        <div className="mx-auto max-w-7xl px-4 pb-10 pt-12 sm:px-6 lg:px-8 lg:pt-16">
-          <Link href="/" className="inline-flex items-center gap-2 text-sm text-fg-muted transition hover:text-fg">
+        <div className="mx-auto max-w-6xl px-4 pb-8 pt-6 sm:px-6 lg:px-8 lg:pt-10">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-fg-muted transition hover:text-fg">
             <ArrowRight className="size-4" aria-hidden />
             همه‌ی محصولات
           </Link>
 
-          <div className="mt-8 grid items-center gap-10 lg:grid-cols-12">
-            <div className="lg:col-span-7">
-              {locked && (
-                <span className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-line bg-surface/60 px-3 py-1 text-xs font-semibold text-fg-muted">
-                  <Clock className="size-3" aria-hidden />
-                  به‌زودی
-                </span>
-              )}
-              <h1 className="display text-balance text-4xl sm:text-5xl lg:text-6xl">{product.nameFa}</h1>
-              <p className="mt-4 text-xl text-fg-muted">{product.tagline}</p>
-
-              <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-4 text-sm">
-                {product.website && (
-                  <div>
-                    <dt className="text-fg-faint">وب‌سایت</dt>
-                    <dd>
-                      <a
-                        href={product.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="ltr-nums inline-flex items-center gap-1 font-semibold underline-offset-4 hover:underline"
-                      >
-                        {product.website.replace("https://", "")}
-                        <ExternalLink className="size-3.5" aria-hidden />
-                      </a>
-                    </dd>
-                  </div>
-                )}
-                {product.version && (
-                  <div>
-                    <dt className="text-fg-faint">نسخه فعلی</dt>
-                    <dd className="font-semibold">{toPersianDigits(product.version)}</dd>
-                  </div>
-                )}
-                {product.phone && (
-                  <div>
-                    <dt className="text-fg-faint">تلفن اختصاصی</dt>
-                    <dd>
-                      <a href={`tel:${product.phone}`} className="ltr-nums font-semibold">
-                        {toPersianDigits(product.phone)}
-                      </a>
-                    </dd>
-                  </div>
-                )}
-              </dl>
-
-              <div className="mt-8">
-                <Link
-                  href={`/consult?product=${product.slug}`}
-                  className="inline-flex items-center gap-2 rounded-full bg-fg px-5 py-3 text-sm font-bold text-bg transition hover:opacity-90 active:scale-[0.98]"
-                >
-                  <MessageSquareText className="size-4" aria-hidden />
-                  مشاوره درباره‌ی {product.nameFa}
-                </Link>
-              </div>
-            </div>
-
-            <div className="lg:col-span-5">
-              <div className="grain flex aspect-[4/3] items-center justify-center rounded-tile border border-[color-mix(in_oklab,var(--accent)_35%,transparent)] bg-surface p-10">
+          <div className="mt-6 grid items-center gap-6 lg:grid-cols-12 lg:gap-10">
+            {/* logo first (top on phones, right column on desktop) */}
+            <div className="lg:col-span-4">
+              <div className="grain mx-auto flex aspect-[4/3] max-w-[280px] items-center justify-center sm:max-w-sm rounded-tile border border-[color-mix(in_oklab,var(--glow)_35%,transparent)] bg-surface p-8">
                 <Image
                   src={product.logo.landing}
                   alt={`لوگوی ${product.nameFa}`}
@@ -149,7 +87,7 @@ export default async function ProductHubPage({ params }: { params: Params }) {
                   height={720}
                   priority
                   className={cn(
-                    "h-auto max-h-56 w-auto object-contain drop-shadow-[0_18px_40px_rgba(0,0,0,0.45)]",
+                    "h-full max-h-40 w-auto object-contain drop-shadow-[0_18px_40px_rgba(0,0,0,0.45)]",
                     product.logo.landingLight && "light:hidden",
                   )}
                 />
@@ -160,27 +98,77 @@ export default async function ProductHubPage({ params }: { params: Params }) {
                     aria-hidden
                     width={1080}
                     height={720}
-                    className="hidden h-auto max-h-56 w-auto object-contain light:block"
+                    className="hidden h-full max-h-40 w-auto object-contain light:block"
                   />
                 )}
               </div>
+            </div>
+
+            <div className="lg:col-span-8">
+              {locked && (
+                <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-line bg-surface/60 px-3 py-1 text-xs font-semibold text-fg-muted">
+                  <Clock className="size-3" aria-hidden />
+                  به‌زودی
+                </span>
+              )}
+              <h1 className="display text-balance text-3xl sm:text-4xl lg:text-5xl">{product.nameFa}</h1>
+              <p className="mt-3 text-lg text-fg-muted">{product.tagline}</p>
+
+              {/* same three facts on every product page */}
+              <dl className="mt-6 grid gap-3 text-sm sm:grid-cols-3">
+                <Meta icon={ExternalLink} label="وب‌سایت">
+                  {product.website ? (
+                    <a href={product.website} target="_blank" rel="noopener noreferrer" className="ltr-nums font-semibold underline-offset-4 hover:underline">
+                      {product.website.replace("https://", "")}
+                    </a>
+                  ) : (
+                    <span className="text-fg-faint">به‌زودی</span>
+                  )}
+                </Meta>
+                <Meta icon={Phone} label="تلفن">
+                  <a href={`tel:${phone.replace(/-/g, "")}`} className="ltr-nums font-semibold">
+                    {toPersianDigits(phone)}
+                  </a>
+                </Meta>
+                <Meta icon={LifeBuoy} label="پشتیبانی">
+                  <a href={holding.supportCenter} target="_blank" rel="noopener noreferrer" className="ltr-nums font-semibold underline-offset-4 hover:underline">
+                    support.softmiliac.com
+                  </a>
+                </Meta>
+              </dl>
+
+              <Link
+                href={`/consult?product=${product.slug}`}
+                className="group mt-6 inline-flex items-center gap-3 rounded-full py-2 pe-5 ps-2 text-sm font-bold text-white shadow-[0_14px_40px_-12px_var(--glow)] transition hover:brightness-110 active:scale-[0.98]"
+                style={{ background: "linear-gradient(135deg, var(--glow), color-mix(in oklab, var(--glow) 60%, black))" }}
+              >
+                <span className="relative inline-flex size-9 items-center justify-center rounded-full bg-white/20">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-white/25 [animation-duration:2.4s] motion-reduce:hidden" aria-hidden />
+                  <MessageSquareText className="relative size-4" aria-hidden />
+                </span>
+                درخواست مشاوره برای {product.nameFa}
+                <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" aria-hidden />
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
       {/* ---------- Actions ---------- */}
-      <section className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
+      <section className="mx-auto mt-8 max-w-6xl px-4 pb-8 sm:mt-10 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-end justify-between gap-6">
-          <h2 className="display text-2xl sm:text-3xl">دسترسی‌ها</h2>
+          <h2 className="display text-xl sm:text-2xl">دسترسی‌ها</h2>
           {locked && <p className="text-sm text-fg-muted">این محصول به‌زودی عرضه می‌شود؛ تا آن زمان معرفی و امکاناتش را ببینید.</p>}
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12">
           {ordered.map((action, i) => (
             <ActionCard key={action.key} action={action} index={i} className={layoutFor(action.key)}>
-              {action.enabled && action.key === "details" &&
-                (richDetails ? <RichDetails product={product} /> : <DetailsBody description={product.description} action={action} />)}
+              {action.enabled && action.key === "details" && (
+                <Expandable collapsedHeight={richDetails ? 260 : 160}>
+                  {richDetails ? <RichDetails product={product} /> : <DetailsBody product={product} action={action} />}
+                </Expandable>
+              )}
               {action.enabled && action.key === "pricing" && <PricingBody action={action} />}
               {action.enabled && action.key !== "details" && action.key !== "pricing" && action.content && (
                 <ul className="mt-4 space-y-1.5 text-sm text-fg-muted">
@@ -212,7 +200,7 @@ function RichDetails({ product }: { product: ResolvedProduct }) {
               return (
                 <li key={h} className="rounded-2xl border border-line bg-bg/40 p-4">
                   <p className="flex items-center gap-2 font-bold">
-                    <Sparkles className="size-4 shrink-0 text-[var(--accent)]" aria-hidden />
+                    <Sparkles className="size-4 shrink-0 text-[var(--glow)]" aria-hidden />
                     {head}
                   </p>
                   {rest.length > 0 && <p className="mt-1 text-sm text-fg-muted">{rest.join(" — ")}</p>}
@@ -232,7 +220,7 @@ function RichDetails({ product }: { product: ResolvedProduct }) {
               <ul className="mt-3 space-y-2 text-sm">
                 {g.items.map((it) => (
                   <li key={it.text} className="flex items-start gap-2">
-                    <Check className="mt-1 size-3.5 shrink-0 text-[var(--accent)]" aria-hidden />
+                    <Check className="mt-1 size-3.5 shrink-0 text-[var(--glow)]" aria-hidden />
                     <span className="text-fg-muted">
                       {it.text}
                       {it.soon && (
@@ -250,28 +238,33 @@ function RichDetails({ product }: { product: ResolvedProduct }) {
         </div>
       </div>
 
+      {product.version && (
+        <p className="text-sm text-fg-muted">
+          نسخه فعلی: <span className="font-semibold text-fg">{toPersianDigits(product.version)}</span>
+        </p>
+      )}
       {product.motto && <p className="display text-xl sm:text-2xl">{product.motto}</p>}
     </div>
   );
 }
 
-function DetailsBody({ description, action }: { description?: string; action: ResolvedAction }) {
+function DetailsBody({ product, action }: { product: ResolvedProduct; action: ResolvedAction }) {
   return (
     <div className="mt-4 space-y-4">
-      {description && <p className="max-w-2xl text-base leading-8 text-fg-muted">{description}</p>}
-      {action.content && action.content.length > 0 ? (
-        <ul className="grid gap-2 sm:grid-cols-2">
+      {product.description && <p className="max-w-3xl text-base leading-8 text-fg-muted">{product.description}</p>}
+      {action.content && action.content.length > 0 && (
+        <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {action.content.map((item) => (
             <li key={item} className="flex items-center gap-2 text-sm">
-              <Check className="size-4 shrink-0 text-[var(--accent-2)] light:text-[var(--accent)]" aria-hidden />
+              <Check className="size-4 shrink-0 text-[var(--glow)] light:text-[var(--accent)]" aria-hidden />
               {item}
             </li>
           ))}
         </ul>
-      ) : (
-        <p className="inline-flex items-center gap-1.5 text-xs text-fg-faint">
-          <Lock className="size-3" aria-hidden />
-          ویژگی‌های کلیدی به‌زودی
+      )}
+      {product.version && (
+        <p className="text-sm text-fg-muted">
+          نسخه فعلی: <span className="font-semibold text-fg">{toPersianDigits(product.version)}</span>
         </p>
       )}
     </div>
@@ -349,6 +342,18 @@ function PricingBody({ action }: { action: ResolvedAction }) {
           {action.note}
         </p>
       )}
+    </div>
+  );
+}
+
+function Meta({ icon: Icon, label, children }: { icon: typeof Phone; label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface/60 px-4 py-3">
+      <Icon className="size-4 shrink-0 text-fg-faint" aria-hidden />
+      <div className="min-w-0">
+        <dt className="text-xs text-fg-faint">{label}</dt>
+        <dd className="truncate">{children}</dd>
+      </div>
     </div>
   );
 }

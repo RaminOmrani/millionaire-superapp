@@ -1,22 +1,16 @@
-import Image from "next/image";
 import Link from "next/link";
 import { MessageSquareText } from "lucide-react";
 import { holding } from "@/content/holding";
+import { HeaderShell } from "@/components/brand/HeaderShell";
+import { HoldingLogo } from "@/components/brand/HoldingLogo";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-line/60 bg-bg/70 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 pt-[env(safe-area-inset-top)] sm:h-20 sm:px-6 lg:px-8 app:h-14 app:sm:h-16">
+    <HeaderShell>
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 pt-[env(safe-area-inset-top)] sm:px-6 lg:px-8 app:h-14">
         <Link href="/" className="flex items-center gap-3 rounded-lg" aria-label={holding.nameFa}>
-          <Image
-            src={holding.logo.horizontal}
-            alt={holding.subtitle}
-            width={1080}
-            height={371}
-            priority
-            className="h-9 w-auto sm:h-11 app:h-8"
-          />
+          <HoldingLogo priority className="h-9 w-auto sm:h-10 app:h-8" />
         </Link>
 
         <nav aria-label="اصلی" className="flex items-center gap-2 sm:gap-3">
@@ -30,11 +24,11 @@ export function SiteHeader() {
             href="/about"
             className="hidden rounded-full px-4 py-2 text-sm font-medium text-fg-muted transition hover:text-fg sm:inline-flex app:hidden"
           >
-            درباره‌ی ما
+            درباره ما
           </Link>
           <Link
             href="/consult"
-            className="inline-flex items-center gap-2 rounded-full bg-brand-red px-4 py-2 text-sm font-bold text-white app:hidden shadow-[0_8px_30px_-10px_var(--color-brand-red)] transition hover:bg-brand-red-light active:scale-[0.98]"
+            className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-brand-red px-4 py-2 text-sm font-bold text-white shadow-[0_8px_30px_-10px_var(--color-brand-red)] transition hover:bg-brand-red-light active:scale-[0.98] app:hidden"
           >
             <MessageSquareText className="size-4" aria-hidden />
             درخواست مشاوره
@@ -42,6 +36,6 @@ export function SiteHeader() {
           <ThemeToggle />
         </nav>
       </div>
-    </header>
+    </HeaderShell>
   );
 }
