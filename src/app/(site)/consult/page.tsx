@@ -1,0 +1,76 @@
+import type { Metadata } from "next";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { ConsultForm } from "@/components/product/ConsultForm";
+import { MapButton } from "@/components/ui/MapButton";
+import { holding } from "@/content/holding";
+import { CONSULT_PRODUCTS } from "@/db/schema";
+import { toPersianDigits } from "@/lib/persian-digits";
+
+export const metadata: Metadata = {
+  title: "درخواست مشاوره",
+  description: `تماس با ${holding.nameFa}`,
+};
+
+export default async function ConsultPage({ searchParams }: { searchParams: Promise<{ product?: string }> }) {
+  const { product } = await searchParams;
+  const defaultProduct = product && (CONSULT_PRODUCTS as readonly string[]).includes(product) ? product : "";
+
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+      <div className="grid gap-12 lg:grid-cols-12">
+        <div className="lg:col-span-5">
+          <h1 className="display text-balance text-3xl sm:text-4xl">درخواست مشاوره</h1>
+          <p className="mt-4 text-lg text-fg-muted">
+            برای انتخاب محصول مناسب کسب‌وکارتان فرم را پر کنید یا مستقیم تماس بگیرید.
+          </p>
+
+          <dl className="mt-10 space-y-5 text-sm">
+            <div className="flex items-start gap-3">
+              <Phone className="mt-0.5 size-4 shrink-0 text-fg-faint" aria-hidden />
+              <div>
+                <dt className="text-fg-faint">تلفن</dt>
+                <dd>
+                  <a href={`tel:${holding.phone.replace(/-/g, "")}`} className="ltr-nums text-lg font-bold">
+                    {toPersianDigits(holding.phone)}
+                  </a>
+                </dd>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Mail className="mt-0.5 size-4 shrink-0 text-fg-faint" aria-hidden />
+              <div>
+                <dt className="text-fg-faint">ایمیل</dt>
+                <dd>
+                  <a href={`mailto:${holding.email}`} className="ltr-nums text-lg font-bold">
+                    {holding.email}
+                  </a>
+                </dd>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Clock className="mt-0.5 size-4 shrink-0 text-fg-faint" aria-hidden />
+              <div>
+                <dt className="text-fg-faint">ساعت کاری</dt>
+                <dd className="font-medium">{holding.workingHours}</dd>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <MapPin className="mt-0.5 size-4 shrink-0 text-fg-faint" aria-hidden />
+              <div>
+                <dt className="text-fg-faint">آدرس</dt>
+                <dd className="font-medium leading-7">
+                  {holding.address}
+                  <MapButton size="sm" className="mt-2" />
+                </dd>
+              </div>
+            </div>
+          </dl>
+        </div>
+
+        <div className="relative lg:col-span-7">
+          <ConsultForm defaultProduct={defaultProduct} />
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,0 +1,1 @@
+ALTER TABLE `product_content` ADD `badge` text;
