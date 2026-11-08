@@ -58,9 +58,9 @@ Two faces from the same code:
 ## 3. Current state (2026-11-08)
 
 - **Live:** https://app.softmiliac.com (HTTPS via certbot), admin at `/admin`.
-- **Git:** all work is on branch `claude/busy-feynman-nyyk6i`. `main` is meant to mirror it
-  (see ROADMAP §4 — if `main` is behind, the branch is the truth). CI (lint + typecheck + build) runs
-  on every push (`.github/workflows/ci.yml`).
+- **Git:** `main` is the stable, complete branch (PR #1 merged everything on 2026-11-08). Work happens
+  on a feature branch (so far `claude/busy-feynman-nyyk6i`), goes to `main` through a PR, and the VPS
+  deploys from `main`. CI (lint + typecheck + build) runs on every push and PR (`.github/workflows/ci.yml`).
 - **Repo visibility:** currently **public** (owner's choice to simplify `git pull` on the VPS).
   Therefore: no secrets, tokens, passwords or private customer data in any committed file.
 - **Done:** phases 1–5 + super-app launcher, app mode, banners CMS, side menu with news, recently
@@ -73,7 +73,7 @@ Two faces from the same code:
 | item | value |
 |---|---|
 | host | Ubuntu VPS (ParsPack, Stockholm), IP in `data.md` §6, logged in as `root` |
-| checkout | `~/millionaire-superapp` (= `/root/millionaire-superapp`), tracks the work branch |
+| checkout | `~/millionaire-superapp` (= `/root/millionaire-superapp`), should track `main` (it was cloned on the work branch; switch with `git fetch origin && git checkout main`) |
 | run | `docker compose -f docker-compose.external-proxy.yml up -d --build` |
 | app port | container 3000 → host `127.0.0.1:3100` (`APP_PORT=3100`; host port 3000 is another site) |
 | reverse proxy | the VPS's existing **nginx** (other vhosts: support.softmiliac.com, clinic, telkap, aiassist) — vhost file `deploy/nginx-app.softmiliac.com.conf`, TLS by `certbot --nginx` |
@@ -188,7 +188,7 @@ pnpm lint && pnpm typecheck && pnpm build   # must all pass before any push
 ## 9. Next steps for whoever continues
 
 1. Read ROADMAP §1 and ask Ramin (Persian, one list) for whatever is still `❓`.
-2. ROADMAP §4: install backup cron, keep `main` in sync with the work branch, re-privatise the repo
+2. ROADMAP §4: install backup cron, move the VPS checkout to `main`, re-privatise the repo
    with the deploy key, rotate `SESSION_SECRET`, configure SMTP.
 3. New features: propose first (Ramin likes concrete, visual proposals), implement in small commits,
    screenshot, then give him the exact VPS update command.

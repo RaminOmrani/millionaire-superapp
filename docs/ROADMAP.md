@@ -19,7 +19,8 @@
 ## ۴) زیرساخت — یادآوری شود
 - [x] اسکریپت بک‌آپ (`deploy/backup.sh`)
 - [ ] نصب cron بک‌آپ روی سرور (دستور یک‌خطی در سرِ همان فایل)
-- [ ] PR و merge برنچ به `main` (تا هر کسی که مخزن را باز می‌کند نسخه‌ی کامل را ببیند)
+- [x] PR و merge برنچ به `main` (PR #1) — `main` حالا نسخه‌ی کامل است
+- [ ] سرور را روی `main` ببر: `cd ~/millionaire-superapp && git fetch origin && git checkout main && bash deploy/update.sh`
 - [ ] Private کردن مخزن + Deploy Key روی سرور برای `git pull`
 - [x] اسکریپت یک‌خطی آپدیت روی سرور (`deploy/update.sh`)
 - [x] CI (GitHub Actions): lint + typecheck + build روی هر push
