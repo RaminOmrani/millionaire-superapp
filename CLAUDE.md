@@ -94,4 +94,6 @@ docs/reference/                site screenshots (design inspiration only)
   keep the item locked and continue.
 - Every reply to Ramin ends with a 3-line progress overview: done / remaining / next, and reminds him of the
   open items in `docs/ROADMAP.md` §1 (locked data) and §4 (infrastructure) when relevant.
-- Never commit `.env`, `data/*.db`, or `node_modules`.
+- Never commit `.env`, `data/*.db`, `data/uploads/`, or `node_modules` (the repo is public — no secrets anywhere).
+- Handoff: `docs/HANDOFF.md` is the project memory for the next agent. Update its §3 (state) and §8 (decisions)
+  plus `docs/ROADMAP.md` in the same commit whenever a step changes them. `AGENTS.md` points other tools here.

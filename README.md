@@ -2,7 +2,9 @@
 
 Unified portal for all products of the Millionaire holding — accounting, CRM, Shop Mojahaz, Menu Club, Garson-yar.
 
+- **New here (human or AI)? Start with `AGENTS.md` → `docs/HANDOFF.md`** (state, deploy, decisions, gotchas)
 - Spec & engineering rules: `CLAUDE.md`
+- Open items: `docs/ROADMAP.md`
 - All content (products, tariffs, contacts, brand tokens): `data.md` — the only content source; `src/content/*.ts` is its typed transcription
 - Logos: `public/brand/<product>/` (SVG) · source: `docs/brand-source/LOGO.ai`
 - Reference screenshots of existing sites: `docs/reference/`
@@ -10,7 +12,7 @@ Unified portal for all products of the Millionaire holding — accounting, CRM, 
 ## Stack
 
 Next.js 16 (App Router, Turbopack) · React 19 · TypeScript · Tailwind CSS v4 · `motion` · `lucide-react` ·
-SQLite (`better-sqlite3`) + Drizzle ORM · Docker + Caddy. Always on the latest stable releases.
+SQLite (`better-sqlite3`) + Drizzle ORM · Docker behind the VPS's nginx. Always on the latest stable releases.
 
 ## Develop
 
@@ -42,28 +44,23 @@ Migrations are applied automatically when the app opens `DATABASE_PATH` (default
 
 ## Deploy (Ubuntu VPS)
 
-```bash
-git clone <repo> millionaire-superapp && cd millionaire-superapp
-cp .env.example .env     # set ADMIN_USERNAME, ADMIN_PASSWORD, SESSION_SECRET (32+ random chars)
-docker compose up -d --build
-docker compose logs -f app   # first start applies the SQLite migration
-```
-
-Caddy terminates TLS for `app.softmiliac.com` (see `Caddyfile`) and proxies to the app container;
-the DNS A record must point at the VPS before certificates can be issued. SQLite lives in the
-`app-data` volume — back it up with `docker compose cp app:/app/data/app.db ./backup.db`.
-
-Update: `git pull && docker compose up -d --build`.
-
-### Existing reverse proxy on the VPS
-
-If ports 80/443 are already taken by nginx or another Caddy, skip the bundled Caddy:
+Production runs on the holding's VPS behind its existing nginx (details: `docs/HANDOFF.md` §4).
 
 ```bash
-docker compose -f docker-compose.external-proxy.yml up -d --build   # app on 127.0.0.1:3000
+# first time
+git clone <repo> ~/millionaire-superapp && cd ~/millionaire-superapp
+cp .env.example .env     # set ADMIN_USERNAME, ADMIN_PASSWORD, SESSION_SECRET (openssl rand -hex 32), APP_PORT=3100
+docker compose -f docker-compose.external-proxy.yml up -d --build    # app on 127.0.0.1:3100
+# nginx vhost: deploy/nginx-app.softmiliac.com.conf → sites-enabled, nginx -t, reload, certbot --nginx -d app.softmiliac.com
+
+# every update
+cd ~/millionaire-superapp && git pull && bash deploy/update.sh       # backs up, rebuilds, prints HTTP status
 ```
 
-Then add the site to the existing proxy — `deploy/nginx-app.softmiliac.com.conf` (nginx) or
-`deploy/caddy-site-block.txt` (Caddy). Both snippets use port 3100; set `APP_PORT=3100` in `.env`
-(3000 is already taken on the holding's VPS). The admin cookie is `Secure`, so `/admin` login only
-works over HTTPS — issue the certificate (e.g. `certbot --nginx -d app.softmiliac.com`) once DNS points here.
+Backups: `deploy/backup.sh` (SQLite + uploaded banners → `~/superapp-backups`, keeps 14; cron line in its header).
+The admin cookie is `Secure`, so `/admin` login only works over HTTPS.
+
+### Clean host (ports 80/443 free)
+
+`docker compose up -d --build` uses the bundled Caddy (`Caddyfile`) to terminate TLS itself;
+`deploy/caddy-site-block.txt` is the snippet for a host that already runs Caddy.
