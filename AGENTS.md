@@ -21,3 +21,13 @@ Claude Code, hence the file name `CLAUDE.md`.
 - Website vs installed app differ via the Tailwind `app:` variant only.
 - Production update (on the VPS): `cd ~/millionaire-superapp && git pull && bash deploy/update.sh`.
 - When you finish a step, update `docs/HANDOFF.md` §3/§8 and `docs/ROADMAP.md` in the same commit.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
