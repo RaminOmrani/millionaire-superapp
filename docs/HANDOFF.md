@@ -32,8 +32,10 @@ Millionaire holding (Mashhad, Iran, founded ۱۳۸۵). Five products, each with 
 | `menuclub` | منوکلاب | active | panel = site |
 | `garson` | گارسون‌یار | active | panel = https://garson.softmiliac.com; long description + 11 feature groups in products.ts |
 
-Each product hub has 5 actions: panel / support / pricing / info / AI. Support is always the plain
-link `https://support.softmiliac.com`. AI is a teaser (locked) everywhere until content exists.
+Each product hub has a 2–3 line intro (description, `line-clamp-3`) and the actions: panel / support /
+videos (millionaire, menuclub only) / pricing / AI / «امکانات و سطح‌بندی» (key `details`, links to
+`/[product]/features`: full description, highlights, feature groups, tiers/plans, consult CTA). Support is always
+the plain link `https://support.softmiliac.com`. AI is a teaser (locked) everywhere until content exists.
 
 Two faces from the same code:
 - **Website** (browser): hero banner, header, footer, mobile CTA bar.
@@ -121,7 +123,7 @@ data.md ──(hand transcription)──▶ src/content/products.ts, holding.ts 
 - `src/components/brand/` — Launcher (search + icon grid), BannerCarousel, AppTabBar, SideMenu,
   HeaderShell/SiteHeader/SiteFooter, HoldingLogo, ServiceIcon, SocialLinks, InstallPrompt,
   MobileCtaBar, HeroVisual, ServiceWorker. `product/` — ProductGrid, ProductTile, ActionCard,
-  Expandable, ConsultForm, RecordVisit. `admin/` — forms/editors. `ui/` — Field, MapButton, ThemeToggle.
+  PricingPlans (shared plan cards), ConsultForm, RecordVisit. `admin/` — forms/editors. `ui/` — Field, MapButton, ThemeToggle.
 - `public/brand/<product>/*.svg` logo packs (which file where: `data.md` §2), `public/brand/icons/`
   service icons, `public/fonts/` Vazirmatn, `public/icons/` + `public/og/` PNGs, `public/sw.js`.
 - `docs/brand-source/LOGO.ai` original artwork; `docs/reference/*.png` screenshots of the existing
@@ -185,6 +187,7 @@ pnpm lint && pnpm typecheck && pnpm build   # must all pass before any push
 | nav | Floating glass tab bar with raised search; side menu with «تازه‌ها» + red dot; «اخیراً» row; admin icon badges | Ramin OK'd Claude's Snapp-inspired proposals |
 | content | Garson-yar active, panel https://garson.softmiliac.com; Instagram `softmilliac` (double l) confirmed | Ramin |
 | content | AI action: one short teaser line ("from analysis and reports to forecasting"), details ❓ | Ramin |
+| hub | Inline «اطلاعات و جزئیات» replaced by a features & tiers page per product (`/[product]/features`, key `details` kept for DB rows); short intro above «دسترسی‌ها»; new «ویدیوهای آموزشی» action (millionaire → Aparat channel, menuclub locked until its link is given) | Ramin + designer, 2026-11-11 |
 
 ## 9. Next steps for whoever continues
 

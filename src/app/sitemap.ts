@@ -16,5 +16,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly" as const,
       priority: p.status === "active" ? 0.9 : 0.4,
     })),
+    ...products.map((p) => ({
+      url: `${base}/${p.slug}/features`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: p.status === "active" ? 0.8 : 0.3,
+    })),
   ];
 }

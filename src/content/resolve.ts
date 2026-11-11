@@ -66,6 +66,11 @@ function mergeAction(base: ProductAction, ov: ActionOverride | undefined, plans:
   };
 }
 
+/** Internal route of a product's «امکانات و سطح‌بندی» page. */
+export function featuresHref(slug: string): string {
+  return `/${slug}/features`;
+}
+
 export function resolveProduct(base: Product, row: ProductContentRow | undefined): ResolvedProduct {
   const detailsBase = base.actions.find((a) => a.key === "details");
   const baseFeatures = detailsBase && detailsBase.enabled && detailsBase.content ? [...detailsBase.content] : [];
@@ -73,7 +78,16 @@ export function resolveProduct(base: Product, row: ProductContentRow | undefined
 
   const actions = base.actions.map((a) => {
     const merged = mergeAction(a, row?.actions?.[a.key], row?.plans ?? undefined);
-    if (a.key === "details" && features.length > 0) merged.content = features;
+    if (a.key === "details") {
+      // «امکانات و سطح‌بندی» is always available: every product has a description,
+      // and it links internally to the features & tiers page.
+      merged.enabled = true;
+      merged.href = featuresHref(base.slug);
+      merged.teaser = undefined;
+      if (features.length > 0) merged.content = features;
+    }
+    // Real plans are shown on the features page; the hub card points there.
+    if (a.key === "pricing" && merged.plans?.length) merged.href = `${featuresHref(base.slug)}#tiers`;
     return merged;
   });
 

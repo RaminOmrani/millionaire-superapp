@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowUpLeft, Bot, CircleHelp, ExternalLink, Info, LifeBuoy, Lock, LogIn, Tag } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, ArrowUpLeft, Bot, CircleHelp, Clapperboard, ExternalLink, LayoutList, LifeBuoy, Lock, LogIn, Tag } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import type { ActionKey } from "@/content/products";
 import type { ResolvedAction } from "@/content/resolve";
@@ -9,26 +10,34 @@ import { cn } from "@/lib/utils";
 const ICONS: Record<ActionKey, typeof LogIn> = {
   panel: LogIn,
   support: LifeBuoy,
+  videos: Clapperboard,
   pricing: Tag,
-  details: Info,
+  details: LayoutList,
   ai: Bot,
 };
 
 const COMING_SOON = "به‌زودی";
 
+const MotionLink = motion.create(Link);
+
 interface Props {
   action: ResolvedAction;
   index: number;
   className?: string;
-  /** Rendered inside the card body (details / pricing content) */
+  /** Short line under the title of a linked card (replaces the URL caption) */
+  caption?: React.ReactNode;
+  /** Rendered inside the card body (e.g. pricing package chips) */
   children?: React.ReactNode;
 }
 
-export function ActionCard({ action, index, className, children }: Props) {
+export function ActionCard({ action, index, className, caption, children }: Props) {
   const reduce = useReducedMotion();
   const Icon = ICONS[action.key] ?? CircleHelp;
   const locked = !action.enabled;
-  const external = action.enabled && !!action.href && !action.plans?.length;
+  const external = action.enabled && !!action.href && /^https?:\/\//.test(action.href);
+  // Site-relative link, e.g. the features & tiers page
+  const internal = action.enabled && !!action.href && action.href.startsWith("/");
+  const linked = external || internal;
 
   const entrance = reduce
     ? {}
@@ -46,7 +55,7 @@ export function ActionCard({ action, index, className, children }: Props) {
     "transition-[border-color,box-shadow,transform] duration-500",
     locked
       ? "cursor-not-allowed opacity-55 saturate-50"
-      : external &&
+      : linked &&
           "hover:-translate-y-1 hover:border-[color-mix(in_oklab,var(--accent)_65%,transparent)] hover:shadow-[0_30px_70px_-30px_color-mix(in_oklab,var(--accent)_80%,transparent)]",
     className,
   );
@@ -70,9 +79,14 @@ export function ActionCard({ action, index, className, children }: Props) {
             <Lock className="size-3" aria-hidden />
             {COMING_SOON}
           </span>
-        ) : external ? (
-          <span className="inline-flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-fg transition group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 light:border-line light:bg-bg/70">
-            <ArrowUpLeft className="size-4" aria-hidden />
+        ) : linked ? (
+          <span
+            className={cn(
+              "inline-flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-fg transition light:border-line light:bg-bg/70",
+              external ? "group-hover:-translate-x-0.5 group-hover:-translate-y-0.5" : "group-hover:-translate-x-1",
+            )}
+          >
+            {external ? <ArrowUpLeft className="size-4" aria-hidden /> : <ArrowLeft className="size-4" aria-hidden />}
           </span>
         ) : null}
       </div>
@@ -80,12 +94,17 @@ export function ActionCard({ action, index, className, children }: Props) {
       <div className="relative z-10 mt-5 flex-1">
         <h3 className="display text-lg sm:text-xl">{action.label}</h3>
         {locked && action.teaser && <p className="mt-2 text-sm leading-7 text-fg-muted">{action.teaser}</p>}
-        {external && (
-          <p className="ltr-nums mt-1 inline-flex items-center gap-1 text-xs text-fg-faint">
-            <ExternalLink className="size-3" aria-hidden />
-            {action.href?.replace(/^https?:\/\//, "")}
-          </p>
+        {caption ? (
+          <p className="mt-1.5 text-sm text-fg-muted">{caption}</p>
+        ) : (
+          external && (
+            <p className="ltr-nums mt-1 inline-flex items-center gap-1 text-xs text-fg-faint">
+              <ExternalLink className="size-3" aria-hidden />
+              {action.href?.replace(/^https?:\/\//, "")}
+            </p>
+          )
         )}
+        {!locked && action.note && <p className="mt-2 text-xs leading-6 text-fg-faint">{action.note}</p>}
         {children}
       </div>
     </>
@@ -112,6 +131,14 @@ export function ActionCard({ action, index, className, children }: Props) {
       >
         {body}
       </motion.a>
+    );
+  }
+
+  if (internal) {
+    return (
+      <MotionLink {...entrance} id={anchor.id} href={action.href!} className={shell}>
+        {body}
+      </MotionLink>
     );
   }
 

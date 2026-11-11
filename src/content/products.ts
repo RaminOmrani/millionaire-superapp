@@ -8,7 +8,11 @@ export type ProductSlug = "millionaire" | "crm" | "shopmojahaz" | "menuclub" | "
 
 export type ProductStatus = "active" | "coming_soon";
 
-export type ActionKey = "panel" | "support" | "pricing" | "details" | "ai";
+/**
+ * `details` keeps its key for DB compatibility (admin overrides are stored per key);
+ * it is the «امکانات و سطح‌بندی» card that links to /[product]/features.
+ */
+export type ActionKey = "panel" | "support" | "videos" | "pricing" | "details" | "ai";
 
 export type ProductAction =
   | {
@@ -79,8 +83,9 @@ export interface Product {
 export const ACTION_LABELS: Record<ActionKey, string> = {
   panel: "ورود به پنل",
   support: "تیکت و پشتیبانی",
+  videos: "ویدیوهای آموزشی",
   pricing: "خرید و تعرفه‌ها",
-  details: "اطلاعات و جزئیات",
+  details: "امکانات و سطح‌بندی",
   ai: "هوش مصنوعی",
 };
 
@@ -110,6 +115,8 @@ export const products: readonly Product[] = [
       // Accounting web panel is still being built (data.md §3.1) — locked.
       { key: "panel", label: ACTION_LABELS.panel, enabled: false, reason: "missing_data" },
       { key: "support", label: ACTION_LABELS.support, enabled: true, href: SUPPORT_URL },
+      // Training videos on the holding's Aparat channel (owner-approved, data.md §1).
+      { key: "videos", label: ACTION_LABELS.videos, enabled: true, href: "https://www.aparat.com/softmiliac" },
       { key: "pricing", label: ACTION_LABELS.pricing, enabled: false, reason: "missing_data" },
       { key: "details", label: ACTION_LABELS.details, enabled: true },
       { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future", teaser: AI_TEASER },
@@ -203,6 +210,8 @@ export const products: readonly Product[] = [
     actions: [
       { key: "panel", label: ACTION_LABELS.panel, enabled: true, href: "https://menusclub.ir" },
       { key: "support", label: ACTION_LABELS.support, enabled: true, href: SUPPORT_URL },
+      // Training-videos link not supplied yet — the owner enables it from the admin panel.
+      { key: "videos", label: ACTION_LABELS.videos, enabled: false, reason: "missing_data" },
       { key: "pricing", label: ACTION_LABELS.pricing, enabled: false, reason: "missing_data" },
       { key: "details", label: ACTION_LABELS.details, enabled: true },
       { key: "ai", label: ACTION_LABELS.ai, enabled: false, reason: "future", teaser: AI_TEASER },

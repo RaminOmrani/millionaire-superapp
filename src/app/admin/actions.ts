@@ -100,7 +100,8 @@ export async function bulkUpdateStatus(formData: FormData) {
 
 /* ---------------- product content ---------------- */
 
-const ACTION_KEYS: ActionKey[] = ["panel", "support", "pricing", "details", "ai"];
+// `details` is always on and links to the features page — nothing to override.
+const ACTION_KEYS: ActionKey[] = ["panel", "support", "videos", "pricing", "ai"];
 
 const lines = (v: FormDataEntryValue | null) =>
   String(v ?? "")

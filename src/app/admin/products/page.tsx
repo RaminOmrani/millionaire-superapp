@@ -5,6 +5,7 @@ import { toggleProductStatus } from "@/app/admin/actions";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { getResolvedProducts } from "@/content/resolve";
 import { formatDateTimeFa } from "@/lib/format";
+import { toPersianDigits } from "@/lib/persian-digits";
 import { getDb, schema } from "@/db/client";
 import { requireAdmin } from "@/lib/session";
 import { cn } from "@/lib/utils";
@@ -58,7 +59,9 @@ export default async function AdminProductsPage() {
                 </div>
                 <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-fg-muted">
                   <dt>دسترسی‌های فعال</dt>
-                  <dd className="font-semibold text-fg">{enabledCount} از ۵</dd>
+                  <dd className="font-semibold text-fg">
+                    {toPersianDigits(enabledCount)} از {toPersianDigits(p.actions.length)}
+                  </dd>
                   <dt>پلن قیمت</dt>
                   <dd className="font-semibold text-fg">{row?.plans?.length ?? 0}</dd>
                   <dt>آخرین ویرایش</dt>

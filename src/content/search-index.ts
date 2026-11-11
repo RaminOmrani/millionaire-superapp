@@ -29,17 +29,27 @@ export function buildSearchIndex(products: ResolvedProduct[]): SearchItem[] {
 
     for (const a of p.actions) {
       if (!a.enabled) continue;
-      const external = !!a.href && !a.plans?.length;
+      const external = !!a.href && /^https?:\/\//.test(a.href);
+      // Site-relative hrefs (features & tiers page) are used as-is; otherwise jump to the card on the hub.
+      const internal = !!a.href && a.href.startsWith("/");
       items.push({
         id: `a:${p.slug}:${a.key}`,
         kind: "action",
         title: a.label,
         subtitle: p.nameFa,
-        href: external ? a.href! : `/${p.slug}#${a.key}`,
+        href: external || internal ? a.href! : `/${p.slug}#${a.key}`,
         external,
         accent: p.accent.primary,
         haystack: normalizeFa(
-          [a.label, p.nameFa, p.nameEn, ...(a.content ?? []), ...(a.plans?.map((pl) => pl.name) ?? [])].join(" "),
+          [
+            a.label,
+            p.nameFa,
+            p.nameEn,
+            ...(a.key === "details" ? ["امکانات", "ویژگی", "پکیج", "سطح‌بندی"] : []),
+            ...(a.key === "videos" ? ["ویدیو", "آموزش", "آپارات", "فیلم"] : []),
+            ...(a.content ?? []),
+            ...(a.plans?.map((pl) => pl.name) ?? []),
+          ].join(" "),
         ),
       });
     }

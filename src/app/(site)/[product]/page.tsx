@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, Clock, ExternalLink, LifeBuoy, Lock, MessageSquareText, Phone, Sparkles, Star } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock, ExternalLink, LifeBuoy, MessageSquareText, Phone } from "lucide-react";
 import { ActionCard } from "@/components/product/ActionCard";
-import { Expandable } from "@/components/product/Expandable";
 import { RecordVisit } from "@/components/product/RecordVisit";
 import { holding } from "@/content/holding";
 import { getProduct, type ActionKey } from "@/content/products";
-import { getResolvedProduct, type ResolvedAction, type ResolvedProduct } from "@/content/resolve";
+import { getResolvedProduct, type ResolvedAction } from "@/content/resolve";
 import { toPersianDigits } from "@/lib/persian-digits";
 import { cn } from "@/lib/utils";
 
@@ -35,18 +34,10 @@ export default async function ProductHubPage({ params }: { params: Params }) {
 
   const locked = product.status === "coming_soon";
   const phone = product.phone ?? holding.phone;
-  const pricing = product.actions.find((a) => a.key === "pricing");
-  const hasPlans = !!pricing?.enabled && !!pricing.plans?.length;
-  // With real plans the pricing card becomes a full-width row at the end; details widens to match.
-  // Short cards first; «اطلاعات و جزئیات» always last and full width (click to expand).
-  const ORDER: ActionKey[] = ["panel", "support", "ai", "pricing", "details"];
+  // Short links first; «امکانات و سطح‌بندی» closes the grid.
+  const ORDER: ActionKey[] = ["panel", "support", "videos", "pricing", "ai", "details"];
   const ordered = [...product.actions].sort((a, b) => ORDER.indexOf(a.key) - ORDER.indexOf(b.key));
-  const richDetails = !!product.featureGroups?.length && product.features.length === 0;
-  const layoutFor = (key: ActionKey) => {
-    if (key === "details") return "sm:col-span-2 lg:col-span-12";
-    if (key === "pricing" && hasPlans) return "sm:col-span-2 lg:col-span-12";
-    return hasPlans ? "lg:col-span-4" : "lg:col-span-3";
-  };
+  const featuresLink = `/${product.slug}/features`;
 
   return (
     <div
@@ -156,22 +147,44 @@ export default async function ProductHubPage({ params }: { params: Params }) {
         </div>
       </section>
 
-      {/* ---------- Actions ---------- */}
+      {/* ---------- Short intro → actions ---------- */}
       <section className="mx-auto mt-8 max-w-6xl px-4 pb-8 sm:mt-10 sm:px-6 lg:px-8">
+        {product.description && (
+          <div className="mb-10 max-w-3xl border-s-2 border-[color-mix(in_oklab,var(--glow)_70%,transparent)] ps-4 sm:ps-5">
+            <p className="line-clamp-3 text-base leading-8 text-fg-muted">{product.description}</p>
+            <Link
+              href={featuresLink}
+              className="group mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-fg underline decoration-[color-mix(in_oklab,var(--glow)_70%,transparent)] decoration-2 underline-offset-[6px] transition hover:decoration-fg"
+            >
+              امکانات و سطح‌بندی
+              <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" aria-hidden />
+            </Link>
+          </div>
+        )}
+
         <div className="mb-6 flex items-end justify-between gap-6">
           <h2 className="display text-xl sm:text-2xl">دسترسی‌ها</h2>
           {locked && <p className="text-sm text-fg-muted">این محصول به‌زودی عرضه می‌شود؛ تا آن زمان معرفی و امکاناتش را ببینید.</p>}
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
           {ordered.map((action, i) => (
-            <ActionCard key={action.key} action={action} index={i} className={layoutFor(action.key)}>
-              {action.enabled && action.key === "details" && (
-                <Expandable collapsedHeight={richDetails ? 260 : 160}>
-                  {richDetails ? <RichDetails product={product} /> : <DetailsBody product={product} action={action} />}
-                </Expandable>
+            <ActionCard
+              key={action.key}
+              action={action}
+              index={i}
+              className={cellClass(i, ordered.length)}
+              caption={captionFor(action)}
+            >
+              {action.enabled && action.key === "pricing" && !action.plans?.length && action.content && (
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {action.content.map((item) => (
+                    <li key={item} className="rounded-full border border-line bg-bg/40 px-3 py-1 text-xs font-semibold text-fg-muted">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               )}
-              {action.enabled && action.key === "pricing" && <PricingBody action={action} />}
               {action.enabled && action.key !== "details" && action.key !== "pricing" && action.content && (
                 <ul className="mt-4 space-y-1.5 text-sm text-fg-muted">
                   {action.content.map((line) => (
@@ -187,165 +200,23 @@ export default async function ProductHubPage({ params }: { params: Params }) {
   );
 }
 
-/** Grouped features + highlights + motto (products with featureGroups, e.g. Garson-yar). */
-function RichDetails({ product }: { product: ResolvedProduct }) {
-  return (
-    <div className="mt-4 space-y-8">
-      {product.description && <p className="max-w-3xl text-base leading-8 text-fg-muted">{product.description}</p>}
-
-      {product.highlights && product.highlights.length > 0 && (
-        <div>
-          <h4 className="mb-3 text-sm font-bold">چرا {product.nameFa}؟</h4>
-          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {product.highlights.map((h) => {
-              const [head, ...rest] = h.split(" — ");
-              return (
-                <li key={h} className="rounded-2xl border border-line bg-bg/40 p-4">
-                  <p className="flex items-center gap-2 font-bold">
-                    <Sparkles className="size-4 shrink-0 text-[var(--glow)]" aria-hidden />
-                    {head}
-                  </p>
-                  {rest.length > 0 && <p className="mt-1 text-sm text-fg-muted">{rest.join(" — ")}</p>}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
-
-      <div>
-        <h4 className="mb-3 text-sm font-bold">امکانات و قابلیت‌ها</h4>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {product.featureGroups!.map((g) => (
-            <section key={g.title} className="rounded-2xl border border-line bg-bg/40 p-4">
-              <h5 className="font-bold">{g.title}</h5>
-              <ul className="mt-3 space-y-2 text-sm">
-                {g.items.map((it) => (
-                  <li key={it.text} className="flex items-start gap-2">
-                    <Check className="mt-1 size-3.5 shrink-0 text-[var(--glow)]" aria-hidden />
-                    <span className="text-fg-muted">
-                      {it.text}
-                      {it.soon && (
-                        <span className="mr-1.5 inline-flex items-center gap-1 rounded-full border border-line px-1.5 text-[10px] font-semibold text-fg-faint">
-                          <Clock className="size-2.5" aria-hidden />
-                          به‌زودی
-                        </span>
-                      )}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
-      </div>
-
-      {product.version && (
-        <p className="text-sm text-fg-muted">
-          نسخه فعلی: <span className="font-semibold text-fg">{toPersianDigits(product.version)}</span>
-        </p>
-      )}
-      {product.motto && <p className="display text-xl sm:text-2xl">{product.motto}</p>}
-    </div>
-  );
+/**
+ * Six-column grid on desktop: rows of three cards; a short last row stretches
+ * (two cards → half each, one card → full width). On two-column tablets an odd last card spans both.
+ */
+function cellClass(i: number, n: number): string {
+  const rest = n % 3;
+  const inLastRow = i >= n - rest;
+  const lg = rest === 0 || !inLastRow ? "lg:col-span-2" : rest === 2 ? "lg:col-span-3" : "lg:col-span-6";
+  const sm = n % 2 === 1 && i === n - 1 ? "sm:col-span-2" : "";
+  return cn(sm, lg);
 }
 
-function DetailsBody({ product, action }: { product: ResolvedProduct; action: ResolvedAction }) {
-  return (
-    <div className="mt-4 space-y-4">
-      {product.description && <p className="max-w-3xl text-base leading-8 text-fg-muted">{product.description}</p>}
-      {action.content && action.content.length > 0 && (
-        <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {action.content.map((item) => (
-            <li key={item} className="flex items-center gap-2 text-sm">
-              <Check className="size-4 shrink-0 text-[var(--glow)] light:text-[var(--accent)]" aria-hidden />
-              {item}
-            </li>
-          ))}
-        </ul>
-      )}
-      {product.version && (
-        <p className="text-sm text-fg-muted">
-          نسخه فعلی: <span className="font-semibold text-fg">{toPersianDigits(product.version)}</span>
-        </p>
-      )}
-    </div>
-  );
-}
-
-function PricingBody({ action }: { action: ResolvedAction }) {
-  if (action.plans && action.plans.length > 0) {
-    const n = action.plans.length;
-    const cols =
-      n === 1 ? "sm:max-w-sm" : n === 2 ? "sm:grid-cols-2 lg:max-w-3xl" : n === 3 ? "sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-4";
-    return (
-      <div className={cn("mt-6 grid gap-4", cols)}>
-        {action.plans.map((plan) => (
-          <div
-            key={plan.name}
-            className={cn(
-              "relative flex flex-col rounded-2xl border p-5",
-              plan.highlight
-                ? "border-[color-mix(in_oklab,var(--accent)_70%,transparent)] bg-[color-mix(in_oklab,var(--accent)_12%,transparent)]"
-                : "border-line bg-bg/40",
-            )}
-          >
-            {plan.highlight && (
-              <span className="absolute -top-3 right-4 inline-flex items-center gap-1 rounded-full bg-fg px-2.5 py-0.5 text-[11px] font-bold text-bg">
-                <Star className="size-3" aria-hidden />
-                پیشنهاد ما
-              </span>
-            )}
-            <h4 className="font-bold">{plan.name}</h4>
-            <p className="mt-2">
-              <span className="display text-2xl">{toPersianDigits(plan.price)}</span>
-              {plan.period && <span className="mr-1 text-xs text-fg-faint">/ {plan.period}</span>}
-            </p>
-            {plan.features.length > 0 && (
-              <ul className="mt-4 flex-1 space-y-1.5 text-sm text-fg-muted">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <Check className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-            )}
-            {plan.href && (
-              <a
-                href={plan.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-5 inline-flex items-center justify-center gap-1.5 rounded-full border border-line px-4 py-2 text-sm font-bold transition hover:bg-fg hover:text-bg"
-              >
-                خرید
-                <ExternalLink className="size-3.5" aria-hidden />
-              </a>
-            )}
-          </div>
-        ))}
-        {action.note && <p className="text-xs text-fg-faint sm:col-span-full">{action.note}</p>}
-      </div>
-    );
-  }
-  if (!action.content) return null;
-  return (
-    <div className="mt-4">
-      <ul className="flex flex-wrap gap-2">
-        {action.content.map((item) => (
-          <li key={item} className="rounded-full border border-line bg-bg/40 px-3 py-1 text-xs font-semibold text-fg-muted">
-            {item}
-          </li>
-        ))}
-      </ul>
-      {action.note && (
-        <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-fg-faint">
-          <Lock className="size-3" aria-hidden />
-          {action.note}
-        </p>
-      )}
-    </div>
-  );
+function captionFor(action: ResolvedAction): string | undefined {
+  if (!action.enabled) return undefined;
+  if (action.key === "details") return "معرفی کامل، امکانات و پکیج‌ها";
+  if (action.key === "pricing" && action.plans?.length) return `${toPersianDigits(action.plans.length)} پکیج — مشاهده‌ی جزئیات`;
+  return undefined;
 }
 
 function Meta({ icon: Icon, label, children }: { icon: typeof Phone; label: string; children: React.ReactNode }) {
