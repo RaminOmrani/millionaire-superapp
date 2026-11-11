@@ -1,6 +1,7 @@
 import "server-only";
 import { holding } from "./holding";
 import type { ResolvedProduct } from "./resolve";
+import { isInternalHref } from "@/lib/safe-href";
 import { normalizeFa, type SearchItem } from "@/lib/search";
 
 /** Everything the launcher search can jump to: products, their enabled actions, and site pages. */
@@ -31,7 +32,7 @@ export function buildSearchIndex(products: ResolvedProduct[]): SearchItem[] {
       if (!a.enabled) continue;
       const external = !!a.href && /^https?:\/\//.test(a.href);
       // Site-relative hrefs (features & tiers page) are used as-is; otherwise jump to the card on the hub.
-      const internal = !!a.href && a.href.startsWith("/");
+      const internal = !!a.href && isInternalHref(a.href);
       items.push({
         id: `a:${p.slug}:${a.key}`,
         kind: "action",

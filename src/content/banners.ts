@@ -22,6 +22,8 @@ export interface BannerView {
   markLight?: string;
   /** Built-in glyph in place of a logo mark (house banners only). */
   icon?: "consult";
+  /** House slide: shown on a surface (website / app) only when no admin banner is live there. */
+  fallback?: boolean;
 }
 
 export const BANNER_THEMES: Array<{ value: string; label: string; accent: string; accent2: string }> = [
@@ -119,10 +121,12 @@ export function getTopBanners(): BannerView[] {
   return [...getAdminBanners("top"), houseTopBanner()];
 }
 
-/** Middle slot = slider of every live admin banner, respecting the optional date window; house slides when empty. */
+/**
+ * Middle slot = slider of every live admin banner (respecting the optional date window), followed by the
+ * house slides tagged `fallback`; `BannerCarousel` uses the house slides on each surface that has no live banner.
+ */
 export function getMiddleBanners(): BannerView[] {
-  const live = getAdminBanners("middle");
-  return live.length > 0 ? live : houseMiddleBanners();
+  return [...getAdminBanners("middle"), ...houseMiddleBanners().map((b) => ({ ...b, fallback: true }))];
 }
 
 function getAdminBanners(placement: Banner["placement"]): BannerView[] {

@@ -20,7 +20,8 @@ prices, URLs, features or contact details — if a value is `❓` in data.md, th
   from /admin/settings (table `settings`, key `password_hash`). `iron-session` cookie, `proxy.ts` guard, login throttling.
 - Logos are SVG — inline them or use `<Image>`; never rasterise in the UI. Recolour via CSS only where a mark is single-colour.
   Exception: `public/icons/*.png` (PWA/apple icons) and `public/og/*.png` (Open Graph) are rendered from the SVGs
-  with Playwright (scratch script, not in repo) because those consumers need PNG.
+  with Playwright (scratch script, not in repo) because those consumers need PNG. `icon-192.png` and
+  `apple-touch-icon.png` are downscaled from `icon-512.png`; `favicon-32.png` is rendered from `mark.svg`.
 - Fonts: Vazirmatn variable woff2 self-hosted from `public/fonts/` (`@font-face` in globals.css), no Google Fonts (blocked for Iranian users).
 - Deploy: Docker (multi-stage, standalone output) on the holding's Ubuntu VPS. That VPS already runs nginx
   on 80/443, so production uses `docker compose -f docker-compose.external-proxy.yml up -d --build`

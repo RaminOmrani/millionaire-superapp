@@ -57,7 +57,7 @@ Two faces from the same code:
   tell him to rotate them (this already happened once with `SESSION_SECRET` — see ROADMAP §4).
 - Every reply ends with a 3-line overview (done / remaining / next) and reminds him of ROADMAP §1/§4.
 
-## 3. Current state (2026-11-08)
+## 3. Current state (2026-11-11)
 
 - **Live:** https://app.softmiliac.com (HTTPS via certbot), admin at `/admin`.
 - **Git:** `main` is the stable, complete branch (PR #1 merged everything on 2026-11-08). Work happens
@@ -68,6 +68,10 @@ Two faces from the same code:
 - **Done:** phases 1–5 + super-app launcher, app mode, banners CMS, side menu with news, recently
   viewed, icon badges, admin CMS for product content and pricing plans, stats, password change,
   e-mail notification (needs SMTP), SEO/OG, PWA + offline page, backups script.
+  Designer pass (2026-11-11): features & tiers page per product (`/[product]/features`), «ویدیوهای آموزشی»
+  action, short intro above the hub actions, fixed top banner + sliding middle banner (house slides per
+  surface), admin-editable «باشگاه مشتریان» band, repaired PWA/apple icons + `favicon-32.png`,
+  white service icons in dark mode.
 - **Not done / waiting:** see `docs/ROADMAP.md`.
 
 ## 4. Production / infrastructure
@@ -158,7 +162,10 @@ pnpm lint && pnpm typecheck && pnpm build   # must all pass before any push
 - **Service worker:** network-first for pages, cache-first for static. Bump `VERSION` in `public/sw.js`
   when precached files change.
 - **Logos:** SVG only in UI (never rasterise; no live `<text>` in SVGs — all outlined). PNGs only for
-  PWA icons/OG, rendered with a throwaway Playwright script (not in repo).
+  PWA icons/OG, rendered with a throwaway Playwright script (not in repo); `icon-192.png` and
+  `apple-touch-icon.png` are downscaled from `icon-512.png` (sharp, lanczos3), `favicon-32.png` from `mark.svg`.
+- **Admin links:** every admin-entered href goes through `isSafeHref` (`src/lib/safe-href.ts`): http(s) or an
+  internal `/path`, never `//host`; renderers treat a link as internal only via `isInternalHref`.
 - **No external runtime services** (no Google Fonts, CDN, analytics, Vercel) — users are in Iran.
 - **Uploads & DB are not in git** (`data/*.db`, `data/uploads/`, `.env` are git-ignored). Never commit
   test uploads.
@@ -188,6 +195,7 @@ pnpm lint && pnpm typecheck && pnpm build   # must all pass before any push
 | content | Garson-yar active, panel https://garson.softmiliac.com; Instagram `softmilliac` (double l) confirmed | Ramin |
 | content | AI action: one short teaser line ("from analysis and reports to forecasting"), details ❓ | Ramin |
 | hub | Inline «اطلاعات و جزئیات» replaced by a features & tiers page per product (`/[product]/features`, key `details` kept for DB rows); short intro above «دسترسی‌ها»; new «ویدیوهای آموزشی» action (millionaire → Aparat channel, menuclub locked until its link is given) | Ramin + designer, 2026-11-11 |
+| icons | Service icons (support / consult / about) white in dark mode, brand red in light; PWA 192/180 PNGs re-made from icon-512 (old ones were broken), `favicon-32.png` added (SW `VERSION` v2) | designer feedback, 2026-11-11 |
 | landing | «باشگاه مشتریان» band after the products grid (both modes): all copy from `/admin/settings` (settings keys `club_title` / `club_text` / `club_href`, no migration); empty text = hidden; link only http(s) or internal `/path` | designer suggestion, 2026-11-11 |
 
 ## 9. Next steps for whoever continues

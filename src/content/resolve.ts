@@ -2,6 +2,7 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import { getDb, schema } from "@/db/client";
 import type { ActionOverride, PricingPlan, ProductContentRow } from "@/db/schema";
+import { ACTION_NOTE_MAX } from "@/lib/validation";
 import { ACTION_LABELS, products, type ActionKey, type Product, type ProductAction, type ProductSlug } from "./products";
 
 /** A product after DB overrides are layered over products.ts. Plain data — safe to pass to client components. */
@@ -59,7 +60,8 @@ function mergeAction(base: ProductAction, ov: ActionOverride | undefined, plans:
     enabled,
     href: ov?.href === null ? undefined : (ov?.href ?? b.href),
     // A data.md note like «قیمت به‌زودی» must not survive next to real plans.
-    note: ov?.note === null ? undefined : (ov?.note ?? (hasPlans ? undefined : b.note)),
+    // Rows saved before the length cap stay bounded on the public cards.
+    note: ov?.note === null ? undefined : (ov?.note?.slice(0, ACTION_NOTE_MAX) ?? (hasPlans ? undefined : b.note)),
     content: ov?.content && ov.content.length > 0 ? ov.content : b.content,
     plans: hasPlans ? plans : undefined,
     overridden: true,
@@ -77,7 +79,9 @@ export function resolveProduct(base: Product, row: ProductContentRow | undefined
   const features = row?.features && row.features.length > 0 ? row.features : baseFeatures;
 
   const actions = base.actions.map((a) => {
-    const merged = mergeAction(a, row?.actions?.[a.key], row?.plans ?? undefined);
+    // `details` is no longer editable in the panel, so an older stored override (note/content) is ignored.
+    const ov = a.key === "details" ? undefined : row?.actions?.[a.key];
+    const merged = mergeAction(a, ov, row?.plans ?? undefined);
     if (a.key === "details") {
       // «امکانات و سطح‌بندی» is always available: every product has a description,
       // and it links internally to the features & tiers page.

@@ -32,8 +32,10 @@ export default async function ProductFeaturesPage({ params }: { params: Params }
   if (!product) notFound();
 
   const pricing = product.actions.find((a) => a.key === "pricing");
-  const plans = pricing?.plans ?? [];
-  const packageNames = plans.length === 0 ? (pricing?.content ?? []) : [];
+  // Tiers follow the pricing action: when the admin locks it, plans and package names stay hidden too.
+  const plans = pricing?.enabled ? (pricing.plans ?? []) : [];
+  const packageNames = pricing?.enabled && plans.length === 0 ? (pricing.content ?? []) : [];
+  const hasTiers = plans.length > 0 || packageNames.length > 0;
   const storeHref = pricing?.enabled && pricing.href && /^https?:\/\//.test(pricing.href) ? pricing.href : undefined;
   // Admin-entered features override the data.md grouped list (same rule as before on the hub).
   const groups = product.features.length === 0 ? (product.featureGroups ?? []) : [];
@@ -100,7 +102,15 @@ export default async function ProductFeaturesPage({ params }: { params: Params }
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold tracking-wide text-fg-muted">امکانات و سطح‌بندی</p>
+              <p className="flex flex-wrap items-center gap-2 text-xs font-bold tracking-wide text-fg-muted">
+                امکانات و سطح‌بندی
+                {product.status === "coming_soon" && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface/60 px-3 py-1 font-semibold">
+                    <Clock className="size-3" aria-hidden />
+                    به‌زودی
+                  </span>
+                )}
+              </p>
               <h1 className="display mt-1 text-balance text-3xl sm:text-5xl lg:text-6xl">{product.nameFa}</h1>
               <p className="mt-2 text-base text-fg-muted sm:text-lg">{product.tagline}</p>
             </div>
@@ -163,13 +173,13 @@ export default async function ProductFeaturesPage({ params }: { params: Params }
             <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 [&>*]:mb-4">
               {groups.map((g, gi) => (
                 <section key={g.title} className="grain relative break-inside-avoid overflow-hidden rounded-tile border border-line bg-surface p-5">
-                  <p className="ltr-nums text-xs font-bold text-fg-faint">{toPersianDigits(String(gi + 1).padStart(2, "0"))}</p>
+                  <p className="ltr-nums text-right text-xs font-bold text-fg-faint">{toPersianDigits(String(gi + 1).padStart(2, "0"))}</p>
                   <h3 className="mt-1 text-lg font-bold">{g.title}</h3>
                   <ul className="mt-4 space-y-2.5 text-sm">
                     {g.items.map((it) => (
                       <li key={it.text} className="flex items-start gap-2">
                         <Check className="mt-1 size-3.5 shrink-0 text-fg" aria-hidden />
-                        <span className={cn("leading-7", it.soon ? "text-fg-faint" : "text-fg-muted")}>
+                        <span className="leading-7 text-fg-muted">
                           {it.text}
                           {it.soon && <SoonChip />}
                         </span>
@@ -211,7 +221,7 @@ export default async function ProductFeaturesPage({ params }: { params: Params }
                     className="grain relative flex min-h-24 flex-col justify-between overflow-hidden rounded-tile border border-line bg-surface p-4 sm:p-5"
                   >
                     <span className="font-bold">{name}</span>
-                    <span className="mt-3 inline-flex items-center gap-1.5 text-xs text-fg-faint">
+                    <span className="mt-3 inline-flex items-center gap-1.5 text-xs text-fg-muted">
                       <Lock className="size-3" aria-hidden />
                       به‌زودی
                     </span>
@@ -247,7 +257,7 @@ export default async function ProductFeaturesPage({ params }: { params: Params }
         {(product.version || product.motto) && <Closing product={product} />}
 
         {/* ---------- Consult CTA ---------- */}
-        <ConsultCta product={product} />
+        <ConsultCta product={product} hasTiers={hasTiers} />
       </div>
     </div>
   );
@@ -258,7 +268,7 @@ function Section({ id, num, title, children }: { id: string; num: string; title:
     <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-28 grid gap-6 lg:grid-cols-12 lg:gap-10">
       <header className="lg:col-span-3">
         <div className="lg:sticky lg:top-28">
-          <span className="ltr-nums block text-sm font-bold text-fg-faint">{num}</span>
+          <span className="ltr-nums block text-right text-sm font-bold text-fg-faint">{num}</span>
           <h2 id={`${id}-title`} className="display mt-1 text-2xl sm:text-3xl">
             {title}
           </h2>
@@ -317,7 +327,7 @@ function Closing({ product }: { product: ResolvedProduct }) {
   );
 }
 
-function ConsultCta({ product }: { product: ResolvedProduct }) {
+function ConsultCta({ product, hasTiers }: { product: ResolvedProduct; hasTiers: boolean }) {
   return (
     <aside className="grain relative overflow-hidden rounded-tile border border-[color-mix(in_oklab,var(--glow)_40%,transparent)] bg-surface p-6 sm:p-10">
       <div
@@ -331,8 +341,11 @@ function ConsultCta({ product }: { product: ResolvedProduct }) {
       />
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-xl">
-          <h2 className="display text-balance text-2xl sm:text-3xl">کدام سطح برای کسب‌وکار شما مناسب است؟</h2>
-          <p className="mt-3 text-fg-muted">برای انتخاب {product.nameFa} متناسب با کسب‌وکارتان، کارشناسان ما با شما تماس می‌گیرند.</p>
+          {/* Tier wording only when tiers/packages actually exist; otherwise the site's standard consult line. */}
+          <h2 className="display text-balance text-2xl sm:text-3xl">
+            {hasTiers ? "کدام سطح برای کسب‌وکار شما مناسب است؟" : `درخواست مشاوره برای ${product.nameFa}`}
+          </h2>
+          <p className="mt-3 text-fg-muted">کارشناسان ما با شما تماس می‌گیرند.</p>
         </div>
         <Link
           href={`/consult?product=${product.slug}`}

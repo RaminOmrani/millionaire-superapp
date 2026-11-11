@@ -26,13 +26,18 @@ export function FixedBanner({ banners, size = "top", className }: { banners: Ban
 
 /**
  * Middle promo slot: horizontal scroll-snap carousel (swipe on phones), dots, gentle autoplay that pauses
- * on hover/touch and never runs with reduced motion. Renders nothing when there are no banners.
+ * on hover/touch and never runs with reduced motion. Each surface (website / installed app) gets its own
+ * live banners, or the `fallback` house slides when none is live there. Renders nothing when both are empty.
  */
 export function BannerCarousel({ banners, size = "top", className }: { banners: BannerView[]; size?: "top" | "middle"; className?: string }) {
-  const web = banners.filter((b) => b.audience !== "app");
-  const app = banners.filter((b) => b.audience !== "web");
-  // Same list for both surfaces → one carousel; otherwise two, switched purely by CSS (no flash).
-  if (web.length === app.length) return <Track banners={banners} size={size} className={className} />;
+  const live = banners.filter((b) => !b.fallback);
+  const house = banners.filter((b) => b.fallback);
+  const forSurface = (list: BannerView[]) => (list.length > 0 ? list : house);
+  const web = forSurface(live.filter((b) => b.audience !== "app"));
+  const app = forSurface(live.filter((b) => b.audience !== "web"));
+  // Identical list for both surfaces → one carousel; otherwise two, switched purely by CSS (no flash).
+  const same = web.length === app.length && web.every((b, i) => b === app[i]);
+  if (same) return <Track banners={web} size={size} className={className} />;
   return (
     <>
       {web.length > 0 && <Track banners={web} size={size} className={cn("app:hidden", className)} />}

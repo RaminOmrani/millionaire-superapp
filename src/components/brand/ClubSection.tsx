@@ -28,11 +28,11 @@ export function ClubSection({ club }: { club: ClubView }) {
         <span aria-hidden className="absolute inset-y-8 right-0 w-1 rounded-l-full bg-brand-red sm:inset-y-10" />
 
         <div className="grid items-center gap-8 p-6 sm:p-10 lg:grid-cols-12 lg:gap-10 lg:p-12 app:p-5">
-          <div className="lg:col-span-7">
-            <h2 id="club-title" className="display text-balance text-3xl leading-[1.2] sm:text-4xl lg:text-5xl app:text-2xl">
+          <div className="min-w-0 lg:col-span-7">
+            <h2 id="club-title" className="display text-balance break-words text-3xl leading-[1.2] sm:text-4xl lg:text-5xl app:text-2xl">
               {club.title}
             </h2>
-            <p className="mt-4 max-w-xl whitespace-pre-line text-pretty text-base leading-8 text-fg-muted sm:text-lg sm:leading-9 app:text-[15px] app:leading-8">
+            <p className="mt-4 max-w-xl whitespace-pre-line text-pretty [overflow-wrap:anywhere] text-base leading-8 text-fg-muted sm:text-lg sm:leading-9 app:text-[15px] app:leading-8">
               {club.text}
             </p>
             {club.href &&

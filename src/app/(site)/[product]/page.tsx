@@ -38,6 +38,14 @@ export default async function ProductHubPage({ params }: { params: Params }) {
   const ORDER: ActionKey[] = ["panel", "support", "videos", "pricing", "ai", "details"];
   const ordered = [...product.actions].sort((a, b) => ORDER.indexOf(a.key) - ORDER.indexOf(b.key));
   const featuresLink = `/${product.slug}/features`;
+  // The details caption only promises what the features page actually has.
+  const pricing = product.actions.find((a) => a.key === "pricing");
+  const detailsCaption =
+    pricing?.enabled && (pricing.plans?.length || pricing.content?.length)
+      ? "معرفی کامل، امکانات و پکیج‌ها"
+      : product.features.length > 0 || product.featureGroups?.length
+        ? "معرفی کامل و امکانات"
+        : "معرفی کامل";
 
   return (
     <div
@@ -174,7 +182,7 @@ export default async function ProductHubPage({ params }: { params: Params }) {
               action={action}
               index={i}
               className={cellClass(i, ordered.length)}
-              caption={captionFor(action)}
+              caption={captionFor(action, detailsCaption)}
             >
               {action.enabled && action.key === "pricing" && !action.plans?.length && action.content && (
                 <ul className="mt-4 flex flex-wrap gap-2">
@@ -212,9 +220,9 @@ function cellClass(i: number, n: number): string {
   return cn(sm, lg);
 }
 
-function captionFor(action: ResolvedAction): string | undefined {
+function captionFor(action: ResolvedAction, detailsCaption: string): string | undefined {
   if (!action.enabled) return undefined;
-  if (action.key === "details") return "معرفی کامل، امکانات و پکیج‌ها";
+  if (action.key === "details") return detailsCaption;
   if (action.key === "pricing" && action.plans?.length) return `${toPersianDigits(action.plans.length)} پکیج — مشاهده‌ی جزئیات`;
   return undefined;
 }

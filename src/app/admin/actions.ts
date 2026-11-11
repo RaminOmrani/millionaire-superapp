@@ -9,7 +9,9 @@ import { products, type ActionKey, type ProductSlug } from "@/content/products";
 import { adminConfigured, checkAdminCredentials, hashPassword, loginThrottled, recordLogin, setSetting } from "@/lib/auth";
 import { clientIp } from "@/lib/rate-limit";
 import { getSession, requireAdmin } from "@/lib/session";
-import { clubSchema, loginSchema, notesSchema, statusSchema, type ClubValues } from "@/lib/validation";
+import { ACTION_NOTE_MAX, clubSchema, loginSchema, notesSchema, statusSchema, type ClubValues } from "@/lib/validation";
+import { isSafeHref } from "@/lib/safe-href";
+import { toPersianDigits } from "@/lib/persian-digits";
 import { CLUB_KEYS } from "@/content/club";
 
 /* ---------------- auth ---------------- */
@@ -114,7 +116,9 @@ const optionalUrl = z
   .string()
   .trim()
   .max(500)
-  .refine((v) => v === "" || /^https?:\/\//.test(v) || v.startsWith("/"), "لینک باید با http(s):// شروع شود.");
+  .refine((v) => v === "" || isSafeHref(v), "لینک باید با http(s):// یا / (مسیری از همین سایت) شروع شود.");
+
+const actionNote = z.string().trim().max(ACTION_NOTE_MAX, `یادداشت حداکثر ${toPersianDigits(ACTION_NOTE_MAX)} نویسه است.`);
 
 const planSchema = z.object({
   name: z.string().trim().min(1).max(80),
@@ -144,7 +148,7 @@ export async function saveProductContent(slug: ProductSlug, _prev: ContentState,
     for (const key of ACTION_KEYS) {
       const mode = String(formData.get(`action.${key}.mode`) ?? "default"); // default | on | off
       const href = optionalUrl.parse(formData.get(`action.${key}.href`) ?? "");
-      const note = String(formData.get(`action.${key}.note`) ?? "").trim();
+      const note = actionNote.parse(String(formData.get(`action.${key}.note`) ?? ""));
       const content = lines(formData.get(`action.${key}.content`));
       const ov: (typeof actions)[string] = {};
       if (mode === "on") ov.enabled = true;

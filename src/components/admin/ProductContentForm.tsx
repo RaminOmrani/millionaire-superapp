@@ -7,6 +7,7 @@ import { PlansEditor } from "@/components/admin/PlansEditor";
 import { inputClass } from "@/components/ui/Field";
 import { ACTION_LABELS, type ActionKey, type Product } from "@/content/products";
 import type { ProductContentRow } from "@/db/schema";
+import { ACTION_NOTE_MAX } from "@/lib/validation";
 
 // Editable actions in hub order. `details` («امکانات و سطح‌بندی») is always on and links to the features page.
 const ACTION_KEYS: ActionKey[] = ["panel", "support", "videos", "pricing", "ai"];
@@ -125,7 +126,7 @@ export function ProductContentForm({ base, row }: { base: Product; row: ProductC
                 </label>
                 <label className="text-sm">
                   یادداشت کوتاه زیر کارت
-                  <input name={`action.${key}.note`} defaultValue={ov?.note ?? ""} placeholder={b?.enabled && b.note ? b.note : "—"} className={inputClass} />
+                  <input name={`action.${key}.note`} maxLength={ACTION_NOTE_MAX} defaultValue={ov?.note ?? ""} placeholder={b?.enabled && b.note ? b.note : "—"} className={inputClass} />
                 </label>
                 <label className="text-sm">
                   {key === "pricing" ? "نام پکیج‌ها وقتی پلنی تعریف نشده (هر خط یک مورد)" : "محتوای داخل کارت (هر خط یک مورد)"}

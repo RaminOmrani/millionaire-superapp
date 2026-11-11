@@ -15,6 +15,9 @@ export function normalizeIranMobile(input: string): string {
 
 const trimmed = (max: number) => z.string().trim().max(max);
 
+/** Admin action notes are shown on the public hub cards — keep them short. */
+export const ACTION_NOTE_MAX = 160;
+
 export const consultSchema = z.object({
   fullName: trimmed(120).min(2, "نام و نام خانوادگی را کامل بنویسید."),
   phone: z

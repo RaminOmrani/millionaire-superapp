@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowUpLeft, Bot, CircleHelp, Clapperboard, ExternalLink, La
 import { motion, useReducedMotion } from "motion/react";
 import type { ActionKey } from "@/content/products";
 import type { ResolvedAction } from "@/content/resolve";
+import { isInternalHref } from "@/lib/safe-href";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<ActionKey, typeof LogIn> = {
@@ -35,8 +36,8 @@ export function ActionCard({ action, index, className, caption, children }: Prop
   const Icon = ICONS[action.key] ?? CircleHelp;
   const locked = !action.enabled;
   const external = action.enabled && !!action.href && /^https?:\/\//.test(action.href);
-  // Site-relative link, e.g. the features & tiers page
-  const internal = action.enabled && !!action.href && action.href.startsWith("/");
+  // Site-relative link, e.g. the features & tiers page (never a protocol-relative "//host")
+  const internal = action.enabled && !!action.href && isInternalHref(action.href);
   const linked = external || internal;
 
   const entrance = reduce
@@ -104,7 +105,7 @@ export function ActionCard({ action, index, className, caption, children }: Prop
             </p>
           )
         )}
-        {!locked && action.note && <p className="mt-2 text-xs leading-6 text-fg-faint">{action.note}</p>}
+        {!locked && action.note && <p className="mt-2 text-xs leading-6 text-fg-muted">{action.note}</p>}
         {children}
       </div>
     </>
