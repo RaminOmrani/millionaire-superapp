@@ -2,7 +2,7 @@
  * Pages are always network-first (content is edited live from /admin), so nothing stale is served.
  * Only when the network is down do navigations fall back to the cached /offline page.
  * Fonts, brand SVGs and hashed Next assets are cache-first (they never change under the same URL). */
-const VERSION = "v1";
+const VERSION = "v2";
 const STATIC = `static-${VERSION}`;
 const PRECACHE = ["/offline", "/fonts/Vazirmatn-Variable.woff2", "/brand/millionaire/mark.svg", "/icons/icon-192.png"];
 

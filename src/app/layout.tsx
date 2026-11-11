@@ -12,7 +12,11 @@ export const metadata: Metadata = {
   description: `${holding.subtitle} — پورتال یکپارچه‌ی محصولات ${holding.nameFa}`,
   applicationName: holding.nameFa,
   icons: {
-    icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }, { url: holding.logo.mark, type: "image/svg+xml" }],
+    icon: [
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: holding.logo.mark, type: "image/svg+xml" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
     apple: "/icons/apple-touch-icon.png",
   },
   openGraph: {
