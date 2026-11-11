@@ -59,7 +59,9 @@ docs/reference/                site screenshots (design inspiration only)
 - Promo banners (table `banners`, `/admin/banners`): slots `top` (between search and icons) and `middle`;
   audience both/web/app; optional date window; uploaded images live in `<data dir>/uploads/banners`
   and are served by `/media/banners/[file]` (raster only, magic-byte checked, 1.5 MB). Top slot is slim, middle is large.
-  An empty slot shows a house banner built only from supplied content (`houseBanner` in `content/banners.ts`).
+  Top slot = ONE fixed banner (first live by sort/date window per surface, `FixedBanner`); middle slot = slider of all
+  live banners (`BannerCarousel`). Empty slot → house content built only from supplied facts (`content/banners.ts`):
+  top = slim consultation CTA, middle = «+۵۰۰۰ کسب‌وکار» + Garson-yar launch slides. Banner marks are straight, no shadow.
 - Side menu (`SideMenu`, hamburger on phones and in the app): nav, «تازه‌ها» from `/api/news` (titled live banners),
   red dot when news is newer than the last opening (localStorage), theme, install, contact, socials.
 - Per-device state uses `lib/local-store.ts` (useSyncExternalStore over localStorage): recently viewed products

@@ -130,9 +130,14 @@ export function BannerForm({ banner, themes }: { banner?: Banner; themes: Theme[
             <label className="text-sm">
               جایگاه
               <select name="placement" value={placement} onChange={(e) => setPlacement(e.target.value as Banner["placement"])} className={inputClass}>
-                <option value="top">بالای صفحه (بین جست‌وجو و آیکون‌ها)</option>
-                <option value="middle">میانه‌ی صفحه (زیر آیکون‌ها)</option>
+                <option value="top">بالای صفحه (یک بنر ثابت، بین جست‌وجو و آیکون‌ها)</option>
+                <option value="middle">میانه‌ی صفحه (اسلایدر، زیر آیکون‌ها)</option>
               </select>
+              <span className="mt-1.5 block text-xs leading-6 text-fg-muted">
+                {placement === "top"
+                  ? "در بالای صفحه فقط یک بنر ثابت دیده می‌شود: اولین بنر فعالِ داخل بازه‌ی زمانی به ترتیب «عدد ترتیب». برای نمایش این بنر، عدد ترتیبش را از بقیه کمتر بگذارید."
+                  : "همه‌ی بنرهای فعالِ میانه‌ی صفحه به‌ترتیب «عدد ترتیب» در اسلایدر می‌چرخند."}
+              </span>
             </label>
             <label className="text-sm">
               نمایش در

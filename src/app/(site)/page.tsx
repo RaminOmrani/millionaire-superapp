@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { ArrowDown, MessageSquareText } from "lucide-react";
 import { HeroVisual } from "@/components/brand/HeroVisual";
-import { BannerCarousel } from "@/components/brand/BannerCarousel";
+import { BannerCarousel, FixedBanner } from "@/components/brand/BannerCarousel";
 import { Launcher, type LauncherProduct } from "@/components/brand/Launcher";
-import { getLiveBanners } from "@/content/banners";
+import { getMiddleBanners, getTopBanners } from "@/content/banners";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { holding } from "@/content/holding";
 import { getResolvedProducts } from "@/content/resolve";
@@ -26,7 +26,7 @@ const SHORT_NAMES: Record<string, string> = {
 export default function LandingPage() {
   const products = getResolvedProducts();
   const activeCount = products.filter((p) => p.status === "active").length;
-  const topBanners = getLiveBanners("top");
+  const topBanners = getTopBanners();
   const yearsActive = currentJalaliYear() - Number(holding.foundedYear);
   const orgJsonLd = {
     "@context": "https://schema.org",
@@ -47,7 +47,7 @@ export default function LandingPage() {
     },
     sameAs: [holding.website, holding.social.instagram, holding.social.aparat],
   };
-  const midBanners = getLiveBanners("middle");
+  const midBanners = getMiddleBanners();
   const launcherProducts: LauncherProduct[] = products.map((p) => ({
     slug: p.slug,
     nameFa: p.nameFa,
@@ -81,12 +81,12 @@ export default function LandingPage() {
             products={launcherProducts}
             index={buildSearchIndex(products)}
             supportUrl={holding.supportCenter}
-            topSlot={topBanners.length > 0 ? <BannerCarousel banners={topBanners} size="top" /> : null}
+            topSlot={<FixedBanner banners={topBanners} size="top" />}
           />
         </div>
       </section>
 
-      {/* ---------- Mid-page promo slot (admin-managed; renders nothing when empty) ---------- */}
+      {/* ---------- Mid-page promo slider (admin banners, or the house slides when none is live) ---------- */}
       {midBanners.length > 0 && (
         <section className="mx-auto mt-10 max-w-5xl px-4 sm:mt-14 sm:px-6 lg:px-8">
           <BannerCarousel banners={midBanners} size="middle" />

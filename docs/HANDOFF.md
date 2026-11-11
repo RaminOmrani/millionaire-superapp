@@ -103,7 +103,7 @@ data.md ──(hand transcription)──▶ src/content/products.ts, holding.ts 
 ```
 
 - `src/content/` — `products.ts` (types + 5 products, `AI_TEASER`), `holding.ts` (company facts,
-  socials, logos), `resolve.ts`, `banners.ts` (`getLiveBanners`, `houseBanner` fallback, themes),
+  socials, logos), `resolve.ts`, `banners.ts` (`getTopBanners` fixed / `getMiddleBanners` slider, house fallbacks, themes),
   `search-index.ts` (launcher search), `labels.ts`.
 - `src/db/` — `schema.ts` tables: `consult_requests`, `product_content`, `settings`,
   `login_attempts`, `banners`. `client.ts` opens SQLite lazily and **applies `drizzle/` migrations on
@@ -179,6 +179,7 @@ pnpm lint && pnpm typecheck && pnpm build   # must all pass before any push
 | super-app | Search-first launcher like Snapp (search bar → icon grid → rest), keep own skeleton | Ramin |
 | super-app | Website and installed app look different (app mode via `data-app`) | Ramin |
 | banners | Two slots like Snapp: slim top (under search) + large middle; admin-managed; house banner when empty | Ramin |
+| banner behaviour | Top slot = one fixed banner (no rotation); middle = auto slider. House: top = consult CTA, middle = +۵۰۰۰ & Garson-yar. Marks straight, no shadow | Ramin + designer, 2026-11-11 |
 | design pass | 27-point list: lighter dark bg `#18181d`, link button top-left, logo before text, «درباره ما», info card last, unified contact rows, dark logos added, Garson active | Ramin |
 | grid | Products + 3 services (support, consult, about) as a compact 2-col (phone) / 4-col (desktop) grid | Ramin |
 | nav | Floating glass tab bar with raised search; side menu with «تازه‌ها» + red dot; «اخیراً» row; admin icon badges | Ramin OK'd Claude's Snapp-inspired proposals |

@@ -40,9 +40,26 @@ export default async function BannersPage() {
         </Link>
       }
     >
+      <div className="mb-6 grid gap-3 text-sm leading-7 sm:grid-cols-2">
+        <div className="rounded-tile border border-line bg-bg-elevated p-4">
+          <p className="font-bold">بالای صفحه: یک بنر ثابت</p>
+          <p className="mt-1 text-fg-muted">
+            همیشه فقط <strong className="text-fg">یک</strong> بنر نشان داده می‌شود، بدون چرخش: اولین بنر فعالِ داخل بازه‌ی زمانی، به ترتیب
+            «عدد ترتیب» (کمتر = اول) و در ترتیب برابر، جدیدترین. بقیه‌ی بنرهای این جایگاه تا نوبتشان برسد دیده نمی‌شوند. اگر بنری
+            نباشد، بنر پیش‌فرض «درخواست مشاوره» نمایش داده می‌شود.
+          </p>
+        </div>
+        <div className="rounded-tile border border-line bg-bg-elevated p-4">
+          <p className="font-bold">میانه‌ی صفحه: اسلایدر</p>
+          <p className="mt-1 text-fg-muted">
+            <strong className="text-fg">همه‌ی</strong> بنرهای فعالِ این جایگاه به‌ترتیب و خودکار می‌چرخند (با نقطه‌های راهنما و کشیدن با
+            انگشت). اگر بنری نباشد، دو اسلاید پیش‌فرض نمایش داده می‌شود: همراه +۵۰۰۰ کسب‌وکار و معرفی گارسون‌یار.
+          </p>
+        </div>
+      </div>
       {rows.length === 0 ? (
         <div className="rounded-tile border border-dashed border-line bg-bg-elevated p-10 text-center text-sm text-fg-muted">
-          هنوز بنری ساخته نشده. تا وقتی در یک جایگاه بنر فعالی نباشد، سایت یک بنر پیش‌فرض نشان می‌دهد (بالا: معرفی گارسون‌یار، پایین: همکاری با +۵۰۰۰ کسب‌وکار). با ساختن اولین بنر هر جایگاه، بنر پیش‌فرض همان جایگاه کنار می‌رود.
+          هنوز بنری ساخته نشده. با ساختن اولین بنر هر جایگاه، بنر(های) پیش‌فرض همان جایگاه کنار می‌رود.
         </div>
       ) : (
         <ul className="grid gap-4 md:grid-cols-2">

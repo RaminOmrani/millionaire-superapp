@@ -2,13 +2,30 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpLeft } from "lucide-react";
+import { ArrowUpLeft, MessageSquareText } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import type { BannerView } from "@/content/banners";
 import { cn } from "@/lib/utils";
 
 /**
- * Promo slot: horizontal scroll-snap carousel (swipe on phones), dots, gentle autoplay that pauses
+ * Top promo slot: exactly ONE fixed banner — no rotation, dots or swipe. Receives the slot's candidates
+ * in priority order and shows the first one meant for each surface; website and installed app are
+ * switched purely by CSS (`app:` variant) so there is no flash.
+ */
+export function FixedBanner({ banners, size = "top", className }: { banners: BannerView[]; size?: "top" | "middle"; className?: string }) {
+  const web = banners.find((b) => b.audience !== "app");
+  const app = banners.find((b) => b.audience !== "web");
+  if (web && web === app) return <BannerCard banner={web} size={size} priority className={className} />;
+  return (
+    <>
+      {web && <BannerCard banner={web} size={size} priority className={cn("app:hidden", className)} />}
+      {app && <BannerCard banner={app} size={size} priority className={cn("hidden app:block", className)} />}
+    </>
+  );
+}
+
+/**
+ * Middle promo slot: horizontal scroll-snap carousel (swipe on phones), dots, gentle autoplay that pauses
  * on hover/touch and never runs with reduced motion. Renders nothing when there are no banners.
  */
 export function BannerCarousel({ banners, size = "top", className }: { banners: BannerView[]; size?: "top" | "middle"; className?: string }) {
@@ -107,9 +124,19 @@ function Track({ banners, size, className }: { banners: BannerView[]; size: "top
   );
 }
 
-function BannerCard({ banner: b, size, priority }: { banner: BannerView; size: "top" | "middle"; priority: boolean }) {
+function BannerCard({ banner: b, size, priority, className }: { banner: BannerView; size: "top" | "middle"; priority: boolean; className?: string }) {
   const imageOnly = !!b.image && !b.title && !b.subtitle;
-  const ratio = size === "top" ? "aspect-[3.3/1] md:aspect-[5.2/1]" : "aspect-[2.05/1] md:aspect-[3.2/1]";
+  // Image banners keep a fixed ratio (artwork is cropped to it). Text banners in the slim top slot
+  // grow to their content on phones instead, so a longer subline never runs into the button.
+  const ratio =
+    size === "top"
+      ? b.image
+        ? "aspect-[3.3/1] md:aspect-[5.2/1]"
+        : "min-h-28 md:min-h-0 md:aspect-[5.2/1]"
+      : "aspect-[2.05/1] md:aspect-[3.2/1]";
+  // The slim top slot gives the text more room so the subline stays readable on a 390px phone.
+  const visualWidth = size === "top" ? "w-[30%]" : "w-[38%]";
+  const textWidth = size === "top" ? "max-w-[70%]" : "max-w-[62%]";
 
   const body = (
     <div
@@ -142,14 +169,20 @@ function BannerCard({ banner: b, size, priority }: { banner: BannerView; size: "
                 "radial-gradient(70% 120% at 0% 100%, color-mix(in oklab, var(--accent-2) 55%, transparent), transparent 65%)",
             }}
           />
-          {b.mark && (
-            <>
-              {/* mark confined to the left third so it never sits under the text */}
-              <span aria-hidden className="pointer-events-none absolute inset-y-0 left-0 flex w-[38%] items-center justify-center p-[3%]">
-                <Image src={b.mark} alt="" width={300} height={300} className={cn("max-h-[88%] w-auto max-w-full rotate-[-6deg] object-contain drop-shadow-[0_16px_32px_rgba(0,0,0,0.5)]", b.markLight && "light:hidden")} />
-                {b.markLight && <Image src={b.markLight} alt="" width={300} height={300} className="hidden max-h-[88%] w-auto max-w-full rotate-[-6deg] object-contain light:block" />}
-              </span>
-            </>
+          {(b.mark || b.icon) && (
+            /* mark confined to the left side so it never sits under the text; straight, no shadow (designer) */
+            <span aria-hidden className={cn("pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center p-[3%]", visualWidth)}>
+              {b.icon === "consult" ? (
+                <MessageSquareText className="h-[58%] w-auto max-w-full text-fg/85" strokeWidth={1.4} />
+              ) : (
+                b.mark && (
+                  <>
+                    <Image src={b.mark} alt="" width={300} height={300} className={cn("max-h-[88%] w-auto max-w-full object-contain", b.markLight && "light:hidden")} />
+                    {b.markLight && <Image src={b.markLight} alt="" width={300} height={300} className="hidden max-h-[88%] w-auto max-w-full object-contain light:block" />}
+                  </>
+                )
+              )}
+            </span>
           )}
         </>
       )}
@@ -160,9 +193,9 @@ function BannerCard({ banner: b, size, priority }: { banner: BannerView; size: "
 
       {!imageOnly && (b.title || b.subtitle) && (
         <>
-          <div className={cn("flex max-w-[62%] flex-col justify-center gap-1 sm:gap-2", size === "top" ? "p-3.5 sm:p-6" : "p-5 sm:p-8", b.image && "text-white")}>
+          <div className={cn("flex flex-col justify-center gap-1 sm:gap-2", textWidth, size === "top" ? "p-3.5 sm:p-6" : "p-5 sm:p-8", b.image && "text-white")}>
             {b.title && <p className={cn("display text-balance leading-snug", size === "top" ? "text-base sm:text-xl lg:text-2xl" : "text-lg sm:text-2xl lg:text-3xl")}>{b.title}</p>}
-            {b.subtitle && <p className={cn("text-xs sm:text-base", size === "top" ? "line-clamp-1" : "line-clamp-2", b.image ? "text-white/80" : "text-fg-muted")}>{b.subtitle}</p>}
+            {b.subtitle && <p className={cn("text-xs sm:text-base", "text-pretty", size === "middle" ? "line-clamp-2" : b.image ? "line-clamp-1" : "line-clamp-3 sm:line-clamp-2", b.image ? "text-white/80" : "text-fg-muted")}>{b.subtitle}</p>}
             {b.href && b.ctaLabel && (
               <span
                 className={cn(
@@ -181,15 +214,15 @@ function BannerCard({ banner: b, size, priority }: { banner: BannerView; size: "
     </div>
   );
 
-  if (!b.href) return body;
+  if (!b.href) return className ? <div className={className}>{body}</div> : body;
   if (b.external)
     return (
-      <a href={b.href} target="_blank" rel="noopener noreferrer" className="block rounded-[1.75rem]">
+      <a href={b.href} target="_blank" rel="noopener noreferrer" className={cn("block rounded-[1.75rem]", className)}>
         {body}
       </a>
     );
   return (
-    <Link href={b.href} className="block rounded-[1.75rem]">
+    <Link href={b.href} className={cn("block rounded-[1.75rem]", className)}>
       {body}
     </Link>
   );
