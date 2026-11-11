@@ -84,7 +84,7 @@ export default function LandingPage() {
             products={launcherProducts}
             index={buildSearchIndex(products)}
             supportUrl={holding.supportCenter}
-            topSlot={<FixedBanner banners={topBanners} size="top" />}
+            topSlot={<FixedBanner key="top-banner" banners={topBanners} size="top" />}
           />
         </div>
       </section>
