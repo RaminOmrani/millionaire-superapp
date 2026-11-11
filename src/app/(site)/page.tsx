@@ -2,8 +2,10 @@ import Link from "next/link";
 import { ArrowDown, MessageSquareText } from "lucide-react";
 import { HeroVisual } from "@/components/brand/HeroVisual";
 import { BannerCarousel, FixedBanner } from "@/components/brand/BannerCarousel";
+import { ClubSection } from "@/components/brand/ClubSection";
 import { Launcher, type LauncherProduct } from "@/components/brand/Launcher";
 import { getMiddleBanners, getTopBanners } from "@/content/banners";
+import { getClub } from "@/content/club";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { holding } from "@/content/holding";
 import { getResolvedProducts } from "@/content/resolve";
@@ -48,6 +50,7 @@ export default function LandingPage() {
     sameAs: [holding.website, holding.social.instagram, holding.social.aparat],
   };
   const midBanners = getMiddleBanners();
+  const club = getClub();
   const launcherProducts: LauncherProduct[] = products.map((p) => ({
     slug: p.slug,
     nameFa: p.nameFa,
@@ -166,6 +169,9 @@ export default function LandingPage() {
           <ProductGrid products={products} />
         </div>
       </section>
+
+      {/* ---------- Customer club (admin-written in /admin/settings; hidden while its text is empty) ---------- */}
+      {club && <ClubSection club={club} />}
     </>
   );
 }

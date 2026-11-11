@@ -188,6 +188,7 @@ pnpm lint && pnpm typecheck && pnpm build   # must all pass before any push
 | content | Garson-yar active, panel https://garson.softmiliac.com; Instagram `softmilliac` (double l) confirmed | Ramin |
 | content | AI action: one short teaser line ("from analysis and reports to forecasting"), details ❓ | Ramin |
 | hub | Inline «اطلاعات و جزئیات» replaced by a features & tiers page per product (`/[product]/features`, key `details` kept for DB rows); short intro above «دسترسی‌ها»; new «ویدیوهای آموزشی» action (millionaire → Aparat channel, menuclub locked until its link is given) | Ramin + designer, 2026-11-11 |
+| landing | «باشگاه مشتریان» band after the products grid (both modes): all copy from `/admin/settings` (settings keys `club_title` / `club_text` / `club_href`, no migration); empty text = hidden; link only http(s) or internal `/path` | designer suggestion, 2026-11-11 |
 
 ## 9. Next steps for whoever continues
 

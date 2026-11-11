@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { CONSULT_PRODUCTS, CONSULT_TIMES, CONSULT_STATUSES } from "@/db/schema";
-import { toLatinDigits } from "./persian-digits";
+import { CLUB_TEXT_MAX, CLUB_TITLE_MAX, isSafeClubHref } from "./club";
+import { toLatinDigits, toPersianDigits } from "./persian-digits";
 
 /** Iranian mobile: 09xxxxxxxxx (accepts Persian digits, spaces, dashes, +98/0098 prefixes). */
 export function normalizeIranMobile(input: string): string {
@@ -42,3 +43,18 @@ export const loginSchema = z.object({
   username: z.string().trim().min(1, "نام کاربری را وارد کنید."),
   password: z.string().min(1, "رمز عبور را وارد کنید."),
 });
+
+/* ---------------- customer club (admin settings → landing section) ---------------- */
+
+export const clubSchema = z.object({
+  title: z.string().trim().max(CLUB_TITLE_MAX, `عنوان حداکثر ${toPersianDigits(CLUB_TITLE_MAX)} کاراکتر است.`),
+  // Empty text is valid: it hides the section on the landing.
+  text: z.string().trim().max(CLUB_TEXT_MAX, `متن حداکثر ${toPersianDigits(CLUB_TEXT_MAX)} کاراکتر است.`),
+  href: z
+    .string()
+    .trim()
+    .max(500, "لینک خیلی طولانی است.")
+    .refine((v) => v === "" || isSafeClubHref(v), "لینک باید آدرس کامل (با https یا http) یا مسیری از همین سایت باشد که با / شروع می‌شود."),
+});
+
+export type ClubValues = z.output<typeof clubSchema>;

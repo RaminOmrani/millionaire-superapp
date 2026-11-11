@@ -9,7 +9,8 @@ import { products, type ActionKey, type ProductSlug } from "@/content/products";
 import { adminConfigured, checkAdminCredentials, hashPassword, loginThrottled, recordLogin, setSetting } from "@/lib/auth";
 import { clientIp } from "@/lib/rate-limit";
 import { getSession, requireAdmin } from "@/lib/session";
-import { loginSchema, notesSchema, statusSchema } from "@/lib/validation";
+import { clubSchema, loginSchema, notesSchema, statusSchema, type ClubValues } from "@/lib/validation";
+import { CLUB_KEYS } from "@/content/club";
 
 /* ---------------- auth ---------------- */
 
@@ -243,4 +244,40 @@ export async function saveNotifyEmail(_prev: SettingsState, formData: FormData):
   if (email && !z.email().safeParse(email).success) return { error: "ایمیل معتبر نیست." };
   setSetting("notify_email", email);
   return { ok: email ? "ایمیل اعلان ذخیره شد." : "اعلان ایمیلی غیرفعال شد." };
+}
+
+/* ---------------- customer club (landing section) ---------------- */
+
+/** `values` echoes what the form should show next (React resets uncontrolled fields after an action). */
+export type ClubState = SettingsState & { values?: ClubValues; at?: number };
+
+export async function saveClub(_prev: ClubState, formData: FormData): Promise<ClubState> {
+  await requireAdmin();
+  const at = Date.now();
+  const field = (name: string) => String(formData.get(name) ?? "").replace(/\r\n?/g, "\n");
+  const submitted: ClubValues = { title: field("title"), text: field("text"), href: field("href") };
+
+  if (formData.get("intent") === "clear") {
+    setSetting(CLUB_KEYS.title, "");
+    setSetting(CLUB_KEYS.text, "");
+    setSetting(CLUB_KEYS.href, "");
+    revalidatePath("/");
+    revalidatePath("/admin/settings");
+    return { ok: "پاک شد؛ بخش باشگاه مشتریان دیگر در صفحه‌ی اول نمایش داده نمی‌شود.", values: { title: "", text: "", href: "" }, at };
+  }
+
+  const parsed = clubSchema.safeParse(submitted);
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "ورودی نامعتبر", values: submitted, at };
+
+  const { title, text, href } = parsed.data;
+  setSetting(CLUB_KEYS.title, title);
+  setSetting(CLUB_KEYS.text, text);
+  setSetting(CLUB_KEYS.href, href);
+  revalidatePath("/");
+  revalidatePath("/admin/settings");
+  return {
+    ok: text ? "ذخیره شد؛ بخش باشگاه مشتریان در صفحه‌ی اول نمایش داده می‌شود." : "ذخیره شد. متن خالی است، پس این بخش در صفحه‌ی اول نمایش داده نمی‌شود.",
+    values: parsed.data,
+    at,
+  };
 }
