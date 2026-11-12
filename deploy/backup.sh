@@ -15,5 +15,5 @@ if docker compose -f docker-compose.external-proxy.yml exec -T app sh -c 'test -
     && tar -czf "$DEST/uploads-$STAMP.tar.gz" -C "$DEST" "uploads-$STAMP" && rm -rf "$DEST/uploads-$STAMP"
 fi
 ls -1t "$DEST"/app-*.db | tail -n +$((KEEP + 1)) | xargs -r rm -f
-ls -1t "$DEST"/uploads-*.tar.gz 2>/dev/null | tail -n +$((KEEP + 1)) | xargs -r rm -f
+{ ls -1t "$DEST"/uploads-*.tar.gz 2>/dev/null || true; } | tail -n +$((KEEP + 1)) | xargs -r rm -f
 echo "$(date -Is) backup ok → $(ls -1t "$DEST"/app-*.db | head -1)"
