@@ -86,7 +86,7 @@ Two faces from the same code:
 | neighbours | container `millionaire-support` on 127.0.0.1:4000 (support site, separate repo) — don't touch |
 | data | Docker volume `app-data` → `/app/data/app.db` (SQLite, WAL) + `/app/data/uploads/banners/*` |
 | update | on the VPS: `cd ~/millionaire-superapp && git pull && bash deploy/update.sh` (backs up first, rebuilds, prints HTTP status) |
-| backup | `deploy/backup.sh` → `~/superapp-backups/` (keeps 14). Cron line is in the script header; **not yet installed** (ROADMAP §4) |
+| backup | `deploy/backup.sh` → `~/superapp-backups/` (keeps 14), pipes `deploy/sqlite-backup.cjs` into `node -` inside the container (standalone output keeps `better-sqlite3` only under `node_modules/.pnpm/`, so a bare `require` fails — fixed 2026-11-12; before that no backup had ever succeeded). Cron line is in the script header; **not yet installed** (ROADMAP §4) |
 | deploy key | an SSH key exists at `~/.ssh/superapp` on the VPS, intended for when the repo goes private again |
 | bundled Caddy | `docker-compose.yml` + `Caddyfile` are only for a clean host with free 80/443 — not used in prod |
 

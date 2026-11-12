@@ -6,8 +6,7 @@ cd "$(dirname "$0")/.."
 KEEP="${KEEP:-14}"
 DEST="${DEST:-$HOME/superapp-backups}"
 mkdir -p "$DEST"
-docker compose -f docker-compose.external-proxy.yml exec -T app sh -c \
-  'cd /app/data && node -e "const D=require(\"better-sqlite3\");new D(\"app.db\",{readonly:true}).backup(\"/tmp/backup.db\").then(()=>process.exit(0))"' \
+docker compose -f docker-compose.external-proxy.yml exec -T app node - < deploy/sqlite-backup.cjs \
   && docker compose -f docker-compose.external-proxy.yml cp app:/tmp/backup.db "$DEST/app-$(date +%F-%H%M).db"
 # Uploaded banner images live next to the DB in the same volume.
 STAMP="$(date +%F-%H%M)"
